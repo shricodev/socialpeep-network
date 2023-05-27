@@ -1,0 +1,13 @@
+@tailwind base;
+
+@layer base {
+  html,
+  body,
+  .app,
+  #root {
+    @apply h-[100%] w-[100%] font-rubik-sans;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
