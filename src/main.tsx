@@ -2,6 +2,7 @@ import "./index.css";
 
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { GlobalProvider } from "./services/appwrite-service.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
@@ -38,12 +39,14 @@ const store = configureStore({
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistStore(store)}>
-          <App />
-        </PersistGate>
-      </Provider>
-    </BrowserRouter>
+    <GlobalProvider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistStore(store)}>
+            <App />
+          </PersistGate>
+        </Provider>
+      </BrowserRouter>
+    </GlobalProvider>
   </React.StrictMode>
 );
