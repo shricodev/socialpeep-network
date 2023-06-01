@@ -40,13 +40,13 @@ const store = configureStore({
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <GlobalProvider>
-      <BrowserRouter>
-        <Provider store={store}>
+      <Provider store={store}>
+        <BrowserRouter>
           <PersistGate loading={null} persistor={persistStore(store)}>
             <App />
           </PersistGate>
-        </Provider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </Provider>
     </GlobalProvider>
   </React.StrictMode>
 );
