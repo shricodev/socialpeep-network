@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { setMode } from "state";
 import { DarkMode, LightMode } from "@mui/icons-material";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const dispatch = useDispatch();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const theme = useTheme();
@@ -51,7 +51,7 @@ const LoginPage = () => {
         bgcolor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Welcome to SocialPeep👋, where connections come alive.
+          Start expanding your social circle with SocialPeep!
         </Typography>
         <Form />
       </Box>
@@ -59,4 +59,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

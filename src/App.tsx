@@ -9,7 +9,7 @@ import AuthState from "interfaces/AuthState";
 import LoginPage from "scenes/loginPage";
 import HomePage from "scenes/homePage";
 import ProfilePage from "scenes/profilePage";
-import Navbar from "scenes/navbar";
+import RegisterPage from "scenes/registerPage";
 
 function App() {
   const mode = useSelector((state: AuthState) => state.mode);
@@ -22,6 +22,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile/:userId" element={<ProfilePage />} />
         </Routes>
       </div>

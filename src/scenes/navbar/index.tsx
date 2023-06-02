@@ -40,14 +40,14 @@ const Navbar = () => {
   const neutralLight: string = theme.palette.neutral.light;
   const dark: string = theme.palette.neutral.dark;
   const background: string = theme.palette.background.default;
-  const alt: string = theme.palette.background.alt;
+  const bgAlt: string = theme.palette.background.alt;
 
   const fullName = `${user?.firstName ? user.firstName : "Not"} ${
     user?.lastName ? user.lastName : "Found"
   }`;
 
   return (
-    <FlexBetween padding="1rem 6%" style={{ backgroundColor: alt }}>
+    <FlexBetween padding="1rem 6%" style={{ backgroundColor: bgAlt }}>
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
