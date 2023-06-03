@@ -1,10 +1,10 @@
 import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
+import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/system";
+import { DarkMode, LightMode } from "@mui/icons-material";
 
 import Form from "./Form";
-import { useDispatch } from "react-redux";
 import { setMode } from "state";
-import { DarkMode, LightMode } from "@mui/icons-material";
 
 const LoginPage = () => {
   const dispatch = useDispatch();

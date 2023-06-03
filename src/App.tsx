@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -13,6 +13,8 @@ import RegisterPage from "scenes/registerPage";
 
 function App() {
   const mode = useSelector((state: AuthState) => state.mode);
+  // check if the user is already logged in
+  const isAuth = Boolean(useSelector((state: AuthState) => state.token));
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
 
   return (
@@ -20,11 +22,28 @@ function App() {
       <div className="app">
         <CssBaseline />
         <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile/:userId" element={<ProfilePage />} />
+          <Route
+            path="/"
+            element={
+              isAuth ? <Navigate to="/home" /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/home"
+            element={isAuth ? <HomePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/login"
+            element={isAuth ? <Navigate to="/home" /> : <LoginPage />}
+          />
+          <Route
+            path="/register"
+            element={!isAuth ? <RegisterPage /> : <Navigate to="/home" />}
+          />
+          <Route
+            path="/profile/:userId"
+            element={isAuth ? <ProfilePage /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
     </ThemeProvider>

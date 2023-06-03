@@ -1,10 +1,10 @@
 import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/system";
+import { useDispatch } from "react-redux";
+import { DarkMode, LightMode } from "@mui/icons-material";
 
 import Form from "./Form";
-import { useDispatch } from "react-redux";
 import { setMode } from "state";
-import { DarkMode, LightMode } from "@mui/icons-material";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();

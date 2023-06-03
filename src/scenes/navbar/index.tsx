@@ -9,9 +9,7 @@ import {
   useMediaQuery,
   MenuItem,
 } from "@mui/material";
-
 import { useTheme } from "@mui/system";
-
 import {
   DarkMode,
   LightMode,
@@ -22,12 +20,12 @@ import {
   Message,
   Close,
 } from "@mui/icons-material";
-
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
+
 import FlexBetween from "components/FlexBetween";
 import AuthState from "interfaces/AuthState";
+import { setMode, setLogout } from "state";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);

@@ -8,7 +8,7 @@ import {
 import { useTheme } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 
 import { setLogin } from "state";
 import { loginSchema, initialValuesLogin } from "schemas/LoginSchema";
@@ -20,15 +20,11 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
   // const acceptedFiles = ["image/jpg", "image/png", "image/jpeg"];
 
-  const login = async (values: unknown, onSubmitProps: unknown) => {
-    console.log("login function invoked");
-    console.log(values);
-
-    navigate("/home");
-  };
-
-  const handleFormSubmit = async (values: unknown, onSubmitProps: unknown) => {
-    await login(values, onSubmitProps);
+  const handleFormSubmit = async (
+    values: any,
+    onSubmitProps: FormikHelpers<any>
+  ) => {
+    // handle appwrite backend here in future 👇
   };
 
   return (

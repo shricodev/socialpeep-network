@@ -3,8 +3,8 @@ import Post from "./Post";
 
 interface AuthState {
   mode: PaletteMode | undefined;
-  user: null | Record<string, unknown>;
-  token: null | string;
+  user: Record<string, null> | null;
+  token: string | null;
   posts: Array<Post>;
 }
 

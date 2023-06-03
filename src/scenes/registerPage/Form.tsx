@@ -9,7 +9,7 @@ import { useTheme } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Formik } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import Dropzone from "react-dropzone";
 
 import FlexBetween from "components/FlexBetween";
@@ -22,15 +22,16 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
   // const acceptedFiles = ["image/jpg", "image/png", "image/jpeg"];
 
-  const register = async (values: unknown, onSubmitProps: unknown) => {
-    console.log("register function invoked");
-    console.log(values);
-
+  const handleFormSubmit = async (
+    values: any,
+    onSubmitProps: FormikHelpers<any>
+  ) => {
+    const formData = new FormData();
+    for (const value in values) formData.append(value, values[value]);
+    formData.append("imagePath", values.picture.name);
+    // handle appwrite backend here in future 👇
+    onSubmitProps.resetForm();
     navigate("/home");
-  };
-
-  const handleFormSubmit = async (values: unknown, onSubmitProps: unknown) => {
-    await register(values, onSubmitProps);
   };
 
   return (
