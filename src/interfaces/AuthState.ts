@@ -3,7 +3,7 @@ import Post from "./Post";
 
 interface AuthState {
   mode: PaletteMode | undefined;
-  user: Record<string, null> | null;
+  email: Record<string, null> | null;
   token: string | null;
   posts: Array<Post>;
 }

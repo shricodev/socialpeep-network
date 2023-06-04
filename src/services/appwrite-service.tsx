@@ -1,5 +1,5 @@
-import { Client, Databases, Account } from "appwrite";
-import { createContext, useContext, useEffect, useState } from "react";
+import { Client, Databases, Account, AppwriteException, ID } from "appwrite";
+import { createContext, useContext, useState } from "react";
 
 import { GlobalProviderProps } from "types/GlobalProvider";
 
@@ -8,13 +8,9 @@ client
   .setEndpoint(import.meta.env.VITE_APPWRITE_API)
   .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const account = new Account(client);
-
-// eslint-disable-next-line react-refresh/only-export-components
 export const databases = new Databases(client);
 
-export const GlobalContext = createContext({});
+export const GlobalContext = createContext<any>(null);
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useGlobalContext = () => useContext(GlobalContext);
@@ -23,47 +19,63 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [user, setUser] = useState<null | unknown>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    account
-      .get()
-      .then((data: unknown) => {
-        if (data) {
-          setUser(data);
-        }
-      })
-      .catch((error: Error) => {
-        console.log(
-          `Error retrieving the account information: ${error.message}`
-        );
-      });
-  }, []);
-
-  const loginWithGoogle = () => {
-    account.createOAuth2Session(
-      "google",
-      `${import.meta.env.VITE_PUBLIC_CLIENT_URL}`
-    );
+  const getUserData = async () => {
+    try {
+      const account = new Account(client);
+      return account.get();
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
   };
 
-  const logout = () => {
-    account
-      .deleteSessions()
-      .then(() => {
+  const loginWithGoogle = () => {
+    const account = new Account(client);
+    account.createOAuth2Session("google");
+  };
+
+  const register = async (email: string, password: string, name: string) => {
+    try {
+      const account = new Account(client);
+      return account.create(ID.unique(), email, password, name);
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const login = async (email: string, password: string) => {
+    try {
+      const account = new Account(client);
+      return account.createEmailSession(email, password);
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const account = new Account(client);
+      account.deleteSession("current").then(() => {
         setUser(null);
-      })
-      .catch((error: Error) => {
-        console.log(`Error getting the account information: ${error.message}`);
       });
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
   };
 
   const contextProps = {
     user,
     setUser,
-    databases,
+    getUserData,
+    login,
+    logout,
+    register,
     loading,
     setLoading,
     loginWithGoogle,
-    logout,
   };
 
   return (

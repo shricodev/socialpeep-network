@@ -50,7 +50,11 @@ const RegisterPage = () => {
         borderRadius="1.5rem"
         bgcolor={theme.palette.background.alt}
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
+        <Typography
+          fontWeight="500"
+          variant="h5"
+          sx={{ mb: "1.5rem", textAlign: "center" }}
+        >
           Start expanding your social circle with SocialPeep!
         </Typography>
         <Form />

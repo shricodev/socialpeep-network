@@ -50,7 +50,11 @@ const LoginPage = () => {
         borderRadius="1.5rem"
         bgcolor={theme.palette.background.alt}
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
+        <Typography
+          fontWeight="500"
+          variant="h5"
+          sx={{ mb: "1.5rem", textAlign: "center" }}
+        >
           Welcome to SocialPeep👋, where connections come alive.
         </Typography>
         <Form />

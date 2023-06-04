@@ -4,7 +4,7 @@ import AuthState from "interfaces/AuthState";
 
 const initialState: AuthState = {
   mode: "light",
-  user: null,
+  email: null,
   token: null,
   posts: [],
 };
@@ -20,20 +20,20 @@ export const authSlice = createSlice({
     },
 
     setLogin: (state, action) => {
-      state.user = action.payload.user;
+      state.email = action.payload.email;
       state.token = action.payload.token;
     },
 
     setLogout: (state) => {
-      state.user = null;
+      state.email = null;
       state.token = null;
     },
 
     setFriends: (state, action) => {
-      if (state.user) {
-        state.user.friends = action.payload.friends;
+      if (state.email) {
+        state.email.friends = action.payload.friends;
       } else {
-        console.error("User friends are non-existent!");
+        alert("User friends are non-existent!");
       }
     },
 
