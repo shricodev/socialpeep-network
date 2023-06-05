@@ -31,16 +31,7 @@ const UserWidget = ({
   const medium = palette.neutral.medium;
 
   const getUser = async () => {
-    // this is just a random code. this needs to be updated
-    // const response = await fetch(
-    //   `${import.meta.env.VITE_APPWRITE_API}/users/${userId}`,
-    //   {
-    //     method: "GET",
-    //     headers: { Authorization: `Bearer ${token}` },
-    //   }
-    // );
-    // const data = await response.json();
-    // setUser(data);
+    // do something here...
   };
 
   useEffect(() => {

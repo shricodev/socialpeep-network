@@ -5,14 +5,13 @@ import {
   useMediaQuery,
   Typography,
 } from "@mui/material";
+import { ID } from "appwrite";
 import { useTheme } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { Formik, FormikHelpers } from "formik";
 import Dropzone from "react-dropzone";
 import { useContext, useState } from "react";
-import { ID } from "appwrite";
 import { ScaleLoader } from "react-spinners";
 
 import { GlobalContext, databases } from "services/appwrite-service";
@@ -24,20 +23,17 @@ const Form = () => {
   const [loading, setLoading] = useState(false);
 
   const { palette } = useTheme();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
 
   // handle the 'Register' Scenario
   const handleFormSubmit = async (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     values: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSubmitProps: FormikHelpers<any>
   ) => {
     setLoading(true);
-    const formData = new FormData();
-    for (const value in values) formData.append(value, values[value]);
-    formData.append("imagePath", values.picture.name);
-
     // destructure the id returned from the account.create and store it in the userId.
     // create appwrite account with the user email and password
     const { $id: userId } = await register(
@@ -45,17 +41,18 @@ const Form = () => {
       values.password,
       `${values.firstName} ${values.lastName}`
     );
-    const { $id: userDocId } = await databases.createDocument(
+
+    await databases.createDocument(
       import.meta.env.VITE_APPWRITE_DB_ID,
-      import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
-      ID.Unique(),
+      import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+      ID.unique(),
       {
         firstName: values.firstName,
         lastName: values.lastName,
         occupation: values.occupation,
         location: values.location,
-        avatar: values.picture,
-        userId,
+        // avatar: values.picture,
+        userId: userId,
       }
     );
     setLoading(false);
@@ -105,6 +102,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.firstName}
                   name="firstName"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={
                     Boolean(touched.firstName) && Boolean(errors.firstName)
                   }
@@ -119,6 +121,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.lastName}
                   name="lastName"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={Boolean(touched.lastName) && Boolean(errors.lastName)}
                   helperText={touched.lastName && errors.lastName}
                   sx={{
@@ -131,6 +138,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.location}
                   name="location"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
                   sx={{
@@ -143,6 +155,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.occupation}
                   name="occupation"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={
                     Boolean(touched.occupation) && Boolean(errors.occupation)
                   }
@@ -195,6 +212,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.email}
                   name="email"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={Boolean(touched.email) && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
                   sx={{
@@ -208,6 +230,11 @@ const Form = () => {
                   onBlur={handleBlur}
                   defaultValue={values.password}
                   name="password"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   error={Boolean(touched.password) && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
                   sx={{

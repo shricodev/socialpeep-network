@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -20,18 +20,20 @@ import {
   Message,
   Close,
 } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import FlexBetween from "components/FlexBetween";
-import AuthState from "interfaces/AuthState";
 import { setMode, setLogout } from "state";
+import { GlobalContext } from "services/appwrite-service";
+import UserData from "interfaces/UserData";
 
 const Navbar = () => {
+  const { getUserData } = useContext(GlobalContext);
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
+  const [userName, setUserName] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state: AuthState) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -40,9 +42,14 @@ const Navbar = () => {
   const background: string = theme.palette.background.default;
   const bgAlt: string = theme.palette.background.alt;
 
-  const fullName = `${user?.firstName ? user.firstName : "Not"} ${
-    user?.lastName ? user.lastName : "Found"
-  }`;
+  useEffect(() => {
+    getUserData().then((result: UserData) => {
+      console.log(result);
+
+      setUserName(result.name);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <FlexBetween padding="1rem 6%" style={{ backgroundColor: bgAlt }}>
@@ -93,7 +100,7 @@ const Navbar = () => {
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard">
             <Select
-              value={fullName}
+              value={userName}
               sx={{
                 backgroundColor: neutralLight,
                 width: "170px",
@@ -109,8 +116,8 @@ const Navbar = () => {
               }}
               input={<InputBase />}
             >
-              <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
+              <MenuItem value={userName}>
+                <Typography>{userName}</Typography>
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>
                 <Typography>Log Out</Typography>
@@ -168,7 +175,7 @@ const Navbar = () => {
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard">
               <Select
-                value={fullName}
+                value={userName}
                 sx={{
                   backgroundColor: neutralLight,
                   width: "150px",
@@ -184,8 +191,8 @@ const Navbar = () => {
                 }}
                 input={<InputBase />}
               >
-                <MenuItem value={fullName}>
-                  <Typography>{fullName}</Typography>
+                <MenuItem value={userName}>
+                  <Typography>{userName}</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => dispatch(setLogout())}>
                   <Typography>Log Out</Typography>

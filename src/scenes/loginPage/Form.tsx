@@ -19,7 +19,7 @@ import { loginSchema, initialValuesLogin } from "schemas/LoginSchema";
 
 const Form = () => {
   const [loading, setLoading] = useState(false);
-  const { login } = useContext(GlobalContext);
+  const { login, getUserData } = useContext(GlobalContext);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,20 +36,23 @@ const Form = () => {
   }) => {
     setLoading(true);
     try {
-      const { $id: userId } = await login(email, password);
-      dispatch(
-        setLogin({
-          email: email,
-          token: userId,
-        })
-      );
+      await login(email, password);
+      getUserData().then(({ $id: UserId }: { $id: string }) => {
+        dispatch(
+          setLogin({
+            email: email,
+            token: UserId,
+          })
+        );
+      });
       navigate("/home");
     } catch (error) {
       const appwriteError = error as AppwriteException;
       setErrorMessage("There was a problem signing you in!");
       throw new Error(appwriteError.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -95,6 +98,11 @@ const Form = () => {
                   name="email"
                   error={Boolean(touched.email) && Boolean(errors.email)}
                   helperText={touched.email && errors.email}
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   sx={{
                     gridColumn: "span 4",
                   }}
@@ -108,6 +116,11 @@ const Form = () => {
                   name="password"
                   error={Boolean(touched.password) && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   sx={{
                     gridColumn: "span 4",
                   }}
