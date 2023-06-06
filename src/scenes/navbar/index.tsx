@@ -15,9 +15,8 @@ import {
   LightMode,
   Menu,
   Search,
-  Notifications,
   Help,
-  Message,
+  Home,
   Close,
 } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
@@ -42,10 +41,16 @@ const Navbar = () => {
   const background: string = theme.palette.background.default;
   const bgAlt: string = theme.palette.background.alt;
 
+  const scrollToTop = (): void => {
+    navigate("/home");
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     getUserData().then((result: UserData) => {
-      console.log(result);
-
       setUserName(result.name);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,6 +93,9 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
+          <IconButton onClick={scrollToTop}>
+            <Home sx={{ fontSize: "25px", color: dark }} />
+          </IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -95,20 +103,20 @@ const Navbar = () => {
               <LightMode sx={{ fontSize: "25px", color: dark }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
+          <IconButton onClick={() => navigate("/help")}>
+            <Help sx={{ fontSize: "25px", color: dark }} />
+          </IconButton>
           <FormControl variant="standard">
             <Select
               value={userName}
               sx={{
                 backgroundColor: neutralLight,
-                width: "170px",
-                borderRadius: "0.50rem",
+                width: "180px",
+                borderRadius: "1rem",
                 padding: "0.25rem 1rem",
                 "& .MuiSvgIcon-root": {
                   pr: "0.25rem",
-                  width: "3rem",
+                  width: "3.5rem",
                 },
                 "& .MuiSelect-select:focus": {
                   backgroundColor: neutralLight,

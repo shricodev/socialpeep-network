@@ -5,7 +5,7 @@ import {
   useMediaQuery,
   Typography,
 } from "@mui/material";
-import { ID } from "appwrite";
+import { ID, AppwriteException } from "appwrite";
 import { useTheme } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,26 +36,33 @@ const Form = () => {
     setLoading(true);
     // destructure the id returned from the account.create and store it in the userId.
     // create appwrite account with the user email and password
-    const { $id: userId } = await register(
-      values.email,
-      values.password,
-      `${values.firstName} ${values.lastName}`
-    );
 
-    await databases.createDocument(
-      import.meta.env.VITE_APPWRITE_DB_ID,
-      import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
-      ID.unique(),
-      {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        occupation: values.occupation,
-        location: values.location,
-        // avatar: values.picture,
-        userId: userId,
-      }
-    );
-    setLoading(false);
+    try {
+      const { $id: userId } = await register(
+        values.email,
+        values.password,
+        `${values.firstName} ${values.lastName}`
+      );
+
+      await databases.createDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        ID.unique(),
+        {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          occupation: values.occupation,
+          location: values.location,
+          // avatar: values.picture,
+          userId: userId,
+        }
+      );
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    } finally {
+      setLoading(false);
+    }
     onSubmitProps.resetForm();
     navigate("/login");
   };

@@ -20,7 +20,6 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [user, setUser] = useState<null | unknown>(null);
-  const [loading, setLoading] = useState(true);
 
   const getUserData = async () => {
     try {
@@ -76,8 +75,6 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     login,
     logout,
     register,
-    loading,
-    setLoading,
     loginWithGoogle,
   };
 

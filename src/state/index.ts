@@ -33,7 +33,7 @@ export const authSlice = createSlice({
       if (state.email) {
         state.email.friends = action.payload.friends;
       } else {
-        alert("User friends are non-existent!");
+        console.log("User friends are non-existent!");
       }
     },
 
