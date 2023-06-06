@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const helpSchema = yup.object().shape({
+export const suggestionSchema = yup.object().shape({
   query: yup
     .string()
     .required("required")
@@ -11,6 +11,6 @@ export const helpSchema = yup.object().shape({
     ),
 });
 
-export const initialValuesHelp = {
+export const initialValuesSuggestion = {
   query: "",
 };

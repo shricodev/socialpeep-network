@@ -14,7 +14,10 @@ import { ScaleLoader } from "react-spinners";
 
 import Navbar from "scenes/navbar";
 import { GlobalContext, databases } from "services/appwrite-service";
-import { helpSchema, initialValuesHelp } from "schemas/HelpSchema";
+import {
+  suggestionSchema,
+  initialValuesSuggestion,
+} from "schemas/SuggestionSchema";
 
 const SuggestionPage = () => {
   const [loading, setLoading] = useState(false);
@@ -93,8 +96,8 @@ const SuggestionPage = () => {
             your feedbacks.
           </Typography>
           <Formik
-            validationSchema={helpSchema}
-            initialValues={initialValuesHelp}
+            validationSchema={suggestionSchema}
+            initialValues={initialValuesSuggestion}
             onSubmit={handleFormSubmit}
           >
             {/* standard formik syntax */}

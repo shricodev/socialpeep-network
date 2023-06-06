@@ -15,10 +15,10 @@ import {
   LightMode,
   Menu,
   Search,
-  Help,
   Home,
   Close,
 } from "@mui/icons-material";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -106,8 +106,8 @@ const Navbar = () => {
               <LightMode sx={{ fontSize: "25px", color: dark }} />
             )}
           </IconButton>
-          <IconButton onClick={() => navigate("/help")}>
-            <Help sx={{ fontSize: "25px", color: dark }} />
+          <IconButton onClick={() => navigate("/suggestions")}>
+            <FeedbackIcon sx={{ fontSize: "25px", color: dark }} />
           </IconButton>
           <FormControl variant="standard">
             <Select
@@ -184,8 +184,8 @@ const Navbar = () => {
                 <LightMode sx={{ fontSize: "25px", color: dark }} />
               )}
             </IconButton>
-            <IconButton onClick={() => navigate("/help")}>
-              <Help sx={{ fontSize: "25px", color: dark }} />
+            <IconButton onClick={() => navigate("/suggestions")}>
+              <FeedbackIcon sx={{ fontSize: "25px", color: dark }} />
             </IconButton>
             <FormControl variant="standard">
               <Select
