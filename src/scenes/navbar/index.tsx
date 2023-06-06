@@ -20,7 +20,7 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import FlexBetween from "components/FlexBetween";
 import { setMode, setLogout } from "state";
@@ -33,6 +33,7 @@ const Navbar = () => {
   const [userName, setUserName] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -42,11 +43,13 @@ const Navbar = () => {
   const bgAlt: string = theme.palette.background.alt;
 
   const scrollToTop = (): void => {
-    navigate("/home");
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (location.pathname !== "/home") navigate("/home");
+    else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   useEffect(() => {
@@ -171,6 +174,9 @@ const Navbar = () => {
             justifyContent="center"
             alignItems="center"
           >
+            <IconButton onClick={scrollToTop}>
+              <Home sx={{ fontSize: "25px", color: dark }} />
+            </IconButton>
             <IconButton onClick={() => dispatch(setMode())}>
               {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
@@ -178,9 +184,9 @@ const Navbar = () => {
                 <LightMode sx={{ fontSize: "25px", color: dark }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
+            <IconButton onClick={() => navigate("/help")}>
+              <Help sx={{ fontSize: "25px", color: dark }} />
+            </IconButton>
             <FormControl variant="standard">
               <Select
                 value={userName}

@@ -10,7 +10,7 @@ import LoginPage from "scenes/loginPage";
 import HomePage from "scenes/homePage";
 import ProfilePage from "scenes/profilePage";
 import RegisterPage from "scenes/registerPage";
-import HelpPage from "scenes/suggestionPage";
+import SuggestionPage from "scenes/suggestionPage";
 
 function App() {
   const mode = useSelector((state: AuthState) => state.mode);
@@ -42,8 +42,8 @@ function App() {
             element={!isAuth ? <RegisterPage /> : <Navigate to="/home" />}
           />
           <Route
-            path="/help"
-            element={isAuth ? <HelpPage /> : <Navigate to="/home" />}
+            path="/suggestions"
+            element={isAuth ? <SuggestionPage /> : <Navigate to="/home" />}
           />
           <Route
             path="/profile/:userId"

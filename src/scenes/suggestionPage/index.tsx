@@ -16,7 +16,7 @@ import Navbar from "scenes/navbar";
 import { GlobalContext, databases } from "services/appwrite-service";
 import { helpSchema, initialValuesHelp } from "schemas/HelpSchema";
 
-const HelpPage = () => {
+const SuggestionPage = () => {
   const [loading, setLoading] = useState(false);
   const { getUserData } = useContext(GlobalContext);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
@@ -166,4 +166,4 @@ const HelpPage = () => {
   );
 };
 
-export default HelpPage;
+export default SuggestionPage;

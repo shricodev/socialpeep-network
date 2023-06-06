@@ -1,3 +1,5 @@
+//! NOTE: commenting since this is yet to be done
+
 // import { Box, useMediaQuery } from "@mui/material";
 // import { useSelector } from "react-redux";
 
