@@ -5,7 +5,7 @@ import {
   useMediaQuery,
   Typography,
 } from "@mui/material";
-import { ID, AppwriteException } from "appwrite";
+import { ID, AppwriteException, Storage } from "appwrite";
 import { useTheme } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,17 +14,32 @@ import Dropzone from "react-dropzone";
 import { useContext, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 
-import { GlobalContext, databases } from "services/appwrite-service";
+import { GlobalContext, databases, client } from "services/appwrite-service";
 import FlexBetween from "components/FlexBetween";
 import { registerSchema, initialValuesRegister } from "schemas/RegisterSchema";
 
 const Form = () => {
   const { register } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
+  const [fileError, setFileError] = useState("");
+  // added this state since I had to handle the strict type checking.
+  const [droppedFile, setDroppedFile] = useState<File | null>(null);
 
   const { palette } = useTheme();
   const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
+
+  const handleProfileImageSubmit = () => {
+    const storage = new Storage(client);
+    if (droppedFile) {
+      const uploadResponse = storage.createFile(
+        import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
+        ID.unique(),
+        droppedFile
+      );
+      console.log(uploadResponse);
+    }
+  };
 
   // handle the 'Register' Scenario
   const handleFormSubmit = async (
@@ -34,10 +49,9 @@ const Form = () => {
     onSubmitProps: FormikHelpers<any>
   ) => {
     setLoading(true);
-    // destructure the id returned from the account.create and store it in the userId.
-    // create appwrite account with the user email and password
-
     try {
+      // destructure the id returned from the account.create and store it in the userId.
+      // create appwrite account with the user email and password
       const { $id: userId } = await register(
         values.email,
         values.password,
@@ -53,18 +67,19 @@ const Form = () => {
           lastName: values.lastName,
           occupation: values.occupation,
           location: values.location,
-          // avatar: values.picture,
           userId: userId,
         }
       );
+
+      handleProfileImageSubmit();
+      onSubmitProps.resetForm();
+      navigate("/login");
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);
     } finally {
       setLoading(false);
     }
-    onSubmitProps.resetForm();
-    navigate("/login");
   };
 
   return (
@@ -187,9 +202,16 @@ const Form = () => {
                   {/* RECEIVE THE USER IMAGE */}
                   <Dropzone
                     multiple={false}
-                    onDrop={(acceptedFiles) =>
-                      setFieldValue("picture", acceptedFiles[0])
-                    }
+                    onDrop={(acceptedFiles) => {
+                      const file = acceptedFiles[0];
+                      setDroppedFile(file);
+                      if (file.size <= 5 * 1024 * 1024) {
+                        setFieldValue("picture", file);
+                        setFileError("");
+                      } else {
+                        setFileError("File size exceeds the limit of 5MB");
+                      }
+                    }}
                   >
                     {({ getRootProps, getInputProps, isDragActive }) => (
                       <Box
@@ -199,7 +221,10 @@ const Form = () => {
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
-                        <input {...getInputProps()} />
+                        <input
+                          className="uploader dropzone"
+                          {...getInputProps()}
+                        />
                         {!values.picture.name ? (
                           <p>[Required] Add/Drop Your Picture Here</p>
                         ) : (
@@ -211,6 +236,13 @@ const Form = () => {
                       </Box>
                     )}
                   </Dropzone>
+                  {/* conditionally render the fileError if the size of the file is
+                  more than 5MB */}
+                  {fileError && (
+                    <Typography color="error.main" fontSize="14px">
+                      {fileError}
+                    </Typography>
+                  )}
                 </Box>
 
                 <TextField
@@ -254,6 +286,7 @@ const Form = () => {
               <Box>
                 <Button
                   fullWidth
+                  disabled={fileError !== ""}
                   type="submit"
                   sx={{
                     m: "2rem 0",
