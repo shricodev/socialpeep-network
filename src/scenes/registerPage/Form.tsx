@@ -286,7 +286,7 @@ const Form = () => {
                   }}
                 />
                 <TextField
-                  label="Optional - Twitter URL"
+                  label="Twitter URL [Optional]"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   defaultValue={values.twitter}
@@ -301,7 +301,7 @@ const Form = () => {
                   }}
                 />
                 <TextField
-                  label="Optional - LinkedIn URL"
+                  label="LinkedIn URL [Optional]"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   defaultValue={values.linkedin}
@@ -316,7 +316,7 @@ const Form = () => {
                   }}
                 />
                 <TextField
-                  label="Optional - GitHub URL"
+                  label="GitHub URL [Optional]"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   defaultValue={values.github}

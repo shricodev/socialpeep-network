@@ -7,7 +7,7 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, Divider } from "@mui/material";
+import { Box, Typography, Divider, IconButton } from "@mui/material";
 import { useTheme } from "@mui/system";
 import { AppwriteException, Storage } from "appwrite";
 
@@ -179,12 +179,14 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <EditOutlined
-                  sx={{ color: main }}
-                  onClick={() => {
-                    setEditInput(true);
-                  }}
-                />
+                <IconButton>
+                  <EditOutlined
+                    sx={{ color: main }}
+                    onClick={() => {
+                      setEditInput(true);
+                    }}
+                  />
+                </IconButton>
               )}
             </FlexBetween>
           )}
@@ -203,12 +205,14 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <EditOutlined
-                  sx={{ color: main }}
-                  onClick={() => {
-                    setEditInput(true);
-                  }}
-                />
+                <IconButton>
+                  <EditOutlined
+                    sx={{ color: main }}
+                    onClick={() => {
+                      setEditInput(true);
+                    }}
+                  />
+                </IconButton>
               )}
             </FlexBetween>
           )}
@@ -229,12 +233,14 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <EditOutlined
-                  sx={{ color: main }}
-                  onClick={() => {
-                    setEditInput(true);
-                  }}
-                />
+                <IconButton>
+                  <EditOutlined
+                    sx={{ color: main }}
+                    onClick={() => {
+                      setEditInput(true);
+                    }}
+                  />
+                </IconButton>
               )}
             </FlexBetween>
           )}
