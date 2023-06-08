@@ -6,6 +6,7 @@ const initialState: AuthState = {
   mode: "light",
   email: null,
   token: null,
+  docId: null,
   posts: [],
 };
 
@@ -22,11 +23,14 @@ export const authSlice = createSlice({
     setLogin: (state, action) => {
       state.email = action.payload.email;
       state.token = action.payload.token;
+      state.docId = action.payload.docId;
     },
 
     setLogout: (state) => {
       state.email = null;
       state.token = null;
+      state.docId = null;
+      localStorage.clear();
     },
 
     setFriends: (state, action) => {

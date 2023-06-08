@@ -5,6 +5,7 @@ interface AuthState {
   mode: PaletteMode | undefined;
   email: Record<string, null> | null;
   token: string | null;
+  docId: string | null;
   posts: Array<Post>;
 }
 

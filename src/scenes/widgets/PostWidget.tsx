@@ -19,11 +19,10 @@ import {
 import { useTheme } from "@mui/system";
 import Dropzone from "react-dropzone";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
-import { setPosts } from "state";
 import FlexBetween from "components/FlexBetween";
 import AuthState from "interfaces/AuthState";
 
@@ -34,7 +33,6 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
   const [post, setPost] = useState("");
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
-  const dispatch = useDispatch();
   const { palette } = useTheme();
 
   const token = useSelector((state: AuthState) => state.token);

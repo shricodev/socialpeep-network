@@ -42,9 +42,12 @@ const UserWidget = ({
     friends: [],
   });
   const [, setEditInput] = useState(false);
-  const userDocId = localStorage.getItem("docId");
   const { palette } = useTheme();
   const token = useSelector((state: AuthState) => state.token);
+  const docId =
+    useSelector((state: AuthState) => state.docId) ??
+    localStorage.getItem("docId");
+
   const navigate = useNavigate();
   const main = palette.neutral.main;
   const dark = palette.neutral.dark;
@@ -57,8 +60,6 @@ const UserWidget = ({
       const result = storage.getFilePreview(
         import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
         profileImgId
-        // eplicitely setting the width of the image.
-        // 60
       );
       setPreviewUrl(result.href);
     } catch (error) {
@@ -69,7 +70,7 @@ const UserWidget = ({
 
   useEffect(() => {
     getUserProfileImg();
-    getUserDocument().then((result: any) => {
+    getUserDocument(docId).then((result: any) => {
       setUser(result);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,13 +180,12 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <IconButton>
-                  <EditOutlined
-                    sx={{ color: main }}
-                    onClick={() => {
-                      setEditInput(true);
-                    }}
-                  />
+                <IconButton
+                  onClick={() => {
+                    setEditInput(true);
+                  }}
+                >
+                  <EditOutlined sx={{ color: main }} />
                 </IconButton>
               )}
             </FlexBetween>
@@ -205,13 +205,12 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <IconButton>
-                  <EditOutlined
-                    sx={{ color: main }}
-                    onClick={() => {
-                      setEditInput(true);
-                    }}
-                  />
+                <IconButton
+                  onClick={() => {
+                    setEditInput(true);
+                  }}
+                >
+                  <EditOutlined sx={{ color: main }} />
                 </IconButton>
               )}
             </FlexBetween>
@@ -233,13 +232,12 @@ const UserWidget = ({
                 </FlexBetween>
               </a>
               {userId === token && (
-                <IconButton>
-                  <EditOutlined
-                    sx={{ color: main }}
-                    onClick={() => {
-                      setEditInput(true);
-                    }}
-                  />
+                <IconButton
+                  onClick={() => {
+                    setEditInput(true);
+                  }}
+                >
+                  <EditOutlined sx={{ color: main }} />
                 </IconButton>
               )}
             </FlexBetween>

@@ -68,13 +68,12 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
-  const getUserDocument = async () => {
-    const storedDocId = localStorage.getItem("docId") ?? "";
+  const getUserDocument = async (docId: string) => {
     try {
       return await databases.getDocument(
         import.meta.env.VITE_APPWRITE_DB_ID,
         import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
-        storedDocId
+        docId
       );
     } catch (error) {
       const appwriteError = error as AppwriteException;

@@ -58,7 +58,6 @@ const Form = () => {
         values.password,
         `${values.firstName} ${values.lastName}`
       );
-      console.log(values);
 
       const { $id: docId } = await databases.createDocument(
         import.meta.env.VITE_APPWRITE_DB_ID,

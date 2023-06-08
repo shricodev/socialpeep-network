@@ -10,14 +10,15 @@ import { useTheme } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Formik } from "formik";
-import { AppwriteException } from "appwrite";
+import { AppwriteException, Query } from "appwrite";
 import { ScaleLoader } from "react-spinners";
 
 import { setLogin } from "state";
-import { GlobalContext } from "services/appwrite-service";
+import { GlobalContext, databases } from "services/appwrite-service";
 import { loginSchema, initialValuesLogin } from "schemas/LoginSchema";
 
 const Form = () => {
+  let docId: string;
   const [loading, setLoading] = useState(false);
   const { login, getUserData } = useContext(GlobalContext);
   const { palette } = useTheme();
@@ -38,12 +39,25 @@ const Form = () => {
     try {
       await login(email, password);
       getUserData().then(({ $id: UserId }: { $id: string }) => {
-        dispatch(
-          setLogin({
-            email: email,
-            token: UserId,
-          })
+        const response = databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DB_ID,
+          import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+          [Query.equal("userId", [UserId])]
         );
+
+        response.then((result) => {
+          if (result.documents && result.documents.length > 0) {
+            docId = result.documents[0].$id;
+          }
+          dispatch(
+            setLogin({
+              email: email,
+              token: UserId,
+              docId: docId,
+            })
+          );
+          localStorage.setItem("docId", docId);
+        });
       });
       navigate("/home");
     } catch (error) {
