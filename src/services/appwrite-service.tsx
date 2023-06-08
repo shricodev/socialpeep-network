@@ -68,10 +68,25 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
+  const getUserDocument = async () => {
+    const storedDocId = localStorage.getItem("docId") ?? "";
+    try {
+      return await databases.getDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        storedDocId
+      );
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
   const contextProps = {
     user,
     setUser,
     getUserData,
+    getUserDocument,
     login,
     logout,
     register,

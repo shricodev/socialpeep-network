@@ -1,5 +1,3 @@
-// ! NOTE: commenting since this is yet to be done
-
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 
@@ -7,12 +5,19 @@ import Navbar from "scenes/navbar";
 import UserWidget from "scenes/widgets/UserWidget";
 import AuthState from "interfaces/AuthState";
 import PostWidget from "scenes/widgets/PostWidget";
+import { useEffect, useState } from "react";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-  const user = useSelector((state: AuthState) => state.user);
-  const _id = user?.id ?? "";
-  const imagePath = user?.imagePath ?? "";
+  const [profileImgId, setProfileImgId] = useState<string | null>(null);
+  const _id = useSelector((state: AuthState) => state.token);
+
+  useEffect(() => {
+    const storedProfileImgId = localStorage.getItem("profileImgId");
+    setProfileImgId(storedProfileImgId);
+    localStorage.removeItem("profileImgId");
+  }, []);
+
   return (
     <Box>
       <Navbar />
@@ -24,7 +29,7 @@ const HomePage = () => {
         justifyContent="space-between"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={_id} imagePath={imagePath} />
+          <UserWidget userId={_id ?? ""} profileImgId={profileImgId ?? ""} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}

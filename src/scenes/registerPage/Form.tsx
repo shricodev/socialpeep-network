@@ -29,15 +29,16 @@ const Form = () => {
   const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
 
-  const handleProfileImageSubmit = () => {
+  const handleProfileImageSubmit = async () => {
     const storage = new Storage(client);
     if (droppedFile) {
-      const uploadResponse = storage.createFile(
+      const { $id: fileId } = await storage.createFile(
         import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
         ID.unique(),
         droppedFile
       );
-      console.log(uploadResponse);
+      // store the user profile image id in the localstorage so i don't need to pass it to multiple components
+      localStorage.setItem("profileImgId", fileId);
     }
   };
 
@@ -57,23 +58,27 @@ const Form = () => {
         values.password,
         `${values.firstName} ${values.lastName}`
       );
+      console.log(values);
 
-      await databases.createDocument(
+      const { $id: docId } = await databases.createDocument(
         import.meta.env.VITE_APPWRITE_DB_ID,
         import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
         ID.unique(),
         {
           firstName: values.firstName,
           lastName: values.lastName,
-          occupation: values.occupation,
           location: values.location,
           userId: userId,
+          occupation: values.occupation,
+          twitter: values.twitter,
+          linkedin: values.linkedin,
+          github: values.github,
         }
       );
-
+      localStorage.setItem("docId", docId);
       handleProfileImageSubmit();
       onSubmitProps.resetForm();
-      navigate("/login");
+      navigate("/home");
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);
@@ -276,6 +281,51 @@ const Form = () => {
                   }}
                   error={Boolean(touched.password) && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+                />
+                <TextField
+                  label="Optional - Twitter URL"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  defaultValue={values.twitter}
+                  name="twitter"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+                />
+                <TextField
+                  label="Optional - LinkedIn URL"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  defaultValue={values.linkedin}
+                  name="linkedin"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+                />
+                <TextField
+                  label="Optional - GitHub URL"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  defaultValue={values.github}
+                  name="github"
+                  InputProps={{
+                    style: {
+                      borderRadius: "30px",
+                    },
+                  }}
                   sx={{
                     gridColumn: "span 4",
                   }}

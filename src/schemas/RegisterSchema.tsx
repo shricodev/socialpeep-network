@@ -14,6 +14,9 @@ export const registerSchema = yup.object().shape({
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
+  twitter: yup.string(),
+  linkedin: yup.string(),
+  github: yup.string(),
 });
 
 export const initialValuesRegister = {
@@ -23,6 +26,9 @@ export const initialValuesRegister = {
   password: "",
   location: "",
   occupation: "",
+  twitter: "",
+  linkedin: "",
+  github: "",
   picture: {
     name: "",
   },

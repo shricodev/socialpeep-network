@@ -2,10 +2,10 @@ import { Box } from "@mui/material";
 
 // profile image
 const UserImage = ({
-  image,
+  imageUrl,
   size = "60px",
 }: {
-  image: string;
+  imageUrl: string;
   size?: string;
 }) => {
   return (
@@ -15,7 +15,7 @@ const UserImage = ({
         width={size}
         height={size}
         alt="User"
-        src={`${import.meta.env.VITE_APPWRITE_API}/assets/${image}`}
+        src="/public/assets/profileHead.png"
       />
     </Box>
   );
