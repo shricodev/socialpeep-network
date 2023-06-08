@@ -20,9 +20,13 @@ import AuthState from "interfaces/AuthState";
 const UserWidget = ({
   userId,
   profileImgId,
+  previewUrl,
+  setPreviewUrl,
 }: {
   userId: string;
   profileImgId: string;
+  previewUrl: string;
+  setPreviewUrl: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const { getUserDocument } = useContext(GlobalContext);
   const [user, setUser] = useState({
@@ -37,7 +41,6 @@ const UserWidget = ({
     impressions: 0,
     friends: [],
   });
-  const [previewUrl, setPreviewUrl] = useState("");
   const [, setEditInput] = useState(false);
   const userDocId = localStorage.getItem("docId");
   const { palette } = useTheme();
@@ -58,7 +61,6 @@ const UserWidget = ({
         // 60
       );
       setPreviewUrl(result.href);
-      console.log(previewUrl);
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);

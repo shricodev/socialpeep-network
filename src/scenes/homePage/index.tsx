@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const [previewUrl, setPreviewUrl] = useState("");
   const [profileImgId, setProfileImgId] = useState<string | null>(null);
   const _id = useSelector((state: AuthState) => state.token);
 
@@ -29,13 +30,18 @@ const HomePage = () => {
         justifyContent="space-between"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={_id ?? ""} profileImgId={profileImgId ?? ""} />
+          <UserWidget
+            userId={_id ?? ""}
+            profileImgId={profileImgId ?? ""}
+            previewUrl={previewUrl}
+            setPreviewUrl={setPreviewUrl}
+          />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          {/* <PostWidget imagePath={imagePath} /> */}
+          <PostWidget imagePath={previewUrl} />
         </Box>
         {isNonMobileScreens && <Box flexBasis="26%"></Box>}
       </Box>
