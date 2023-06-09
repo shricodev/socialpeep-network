@@ -3,10 +3,11 @@ import {
   DeleteOutlined,
   AttachFileOutlined,
   EditOutlined,
-  MicOutlined,
+  EmojiEmotionsOutlined,
   GifBoxOutlined,
   MoreHorizOutlined,
 } from "@mui/icons-material";
+import Picker from "@emoji-mart/react";
 import {
   Box,
   Typography,
@@ -15,6 +16,7 @@ import {
   Divider,
   IconButton,
   Button,
+  Popover,
 } from "@mui/material";
 import { useTheme } from "@mui/system";
 import Dropzone from "react-dropzone";
@@ -29,6 +31,7 @@ import AuthState from "interfaces/AuthState";
 const PostWidget = ({ imagePath }: { imagePath: string }) => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [isImage, setIsImage] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [post, setPost] = useState("");
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
@@ -42,6 +45,18 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
 
   const handlePost = () => {
     // do something here... backend
+  };
+
+  const handleEmojiSelect = (emoji: any) => {
+    setPost((prevPost) => prevPost + emoji.native);
+  };
+
+  const handleToggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  };
+
+  const handleEmojiPickerClose = () => {
+    setShowEmojiPicker(false);
   };
 
   return (
@@ -59,6 +74,22 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
             padding: "1rem 2rem",
           }}
         />
+        <Popover
+          open={showEmojiPicker}
+          onClose={handleEmojiPickerClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <Box sx={{ p: 0.4 }}>
+            <Picker onEmojiSelect={handleEmojiSelect} />
+          </Box>
+        </Popover>
       </FlexBetween>
       {isImage && (
         <Box
@@ -128,19 +159,19 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
 
         {isNonMobileScreens ? (
           <>
-            <FlexBetween gap="0.25rem">
+            <FlexBetween gap="0.25rem" onClick={handleToggleEmojiPicker}>
+              <EmojiEmotionsOutlined sx={{ color: mediumMain }} />
+              <Typography color={mediumMain}>Emoji</Typography>
+            </FlexBetween>
+
+            <FlexBetween gap="0.25rem" sx={{ cursor: "not-allowed" }}>
               <GifBoxOutlined sx={{ color: mediumMain }} />
               <Typography color={mediumMain}>Clip</Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
+            <FlexBetween gap="0.25rem" sx={{ cursor: "not-allowed" }}>
               <AttachFileOutlined sx={{ color: mediumMain }} />
               <Typography color={mediumMain}>Attachment</Typography>
-            </FlexBetween>
-
-            <FlexBetween gap="0.25rem">
-              <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
             </FlexBetween>
           </>
         ) : (
