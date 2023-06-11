@@ -1,6 +1,6 @@
-interface Post {
+type PostInfoType = {
   postId: string;
-  userId: string;
+  postUserId: string;
   firstName: string;
   lastName: string;
   postText: string;
@@ -9,6 +9,6 @@ interface Post {
   userPictureUrl: string;
   likes: number;
   comments: string[];
-}
+};
 
-export default Post;
+export default PostInfoType;

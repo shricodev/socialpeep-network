@@ -66,7 +66,7 @@ const SuggestionPage = () => {
       <Navbar />
       {loading ? (
         <Box
-          height="80vh"
+          height="85vh"
           justifyContent="center"
           display="flex"
           alignItems="center"

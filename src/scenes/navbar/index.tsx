@@ -19,22 +19,28 @@ import {
   Close,
 } from "@mui/icons-material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import FlexBetween from "components/FlexBetween";
 import { setMode, setLogout } from "state";
 import { GlobalContext } from "services/appwrite-service";
 import UserData from "interfaces/UserData";
+import AuthState from "interfaces/AuthState";
 
 const Navbar = () => {
-  const { getUserData } = useContext(GlobalContext);
+  const { getUserData, searchUsersByName } = useContext(GlobalContext);
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const [userName, setUserName] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [toggleSearchResult, setToggleSearchResult] = useState(false);
+  const [result, setResult] = useState();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const userId = useSelector((state: AuthState) => state.token);
 
   const theme = useTheme();
   const neutralLight: string = theme.palette.neutral.light;
@@ -85,8 +91,20 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search.." sx={{ userSelect: "none" }} />
-            <IconButton>
+            <InputBase
+              placeholder="Search.."
+              sx={{ userSelect: "none" }}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <IconButton
+              onClick={() => {
+                setToggleSearchResult(!toggleSearchResult);
+                const response = searchUsersByName(searchInput);
+                setResult(response);
+                console.log(response);
+              }}
+            >
               <Search />
             </IconButton>
           </FlexBetween>
@@ -127,7 +145,10 @@ const Navbar = () => {
               }}
               input={<InputBase />}
             >
-              <MenuItem value={userName}>
+              <MenuItem
+                value={userName}
+                onClick={() => navigate(`/profile/${userId}`)}
+              >
                 <Typography>{userName}</Typography>
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>

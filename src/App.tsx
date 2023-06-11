@@ -46,6 +46,10 @@ function App() {
             element={isAuth ? <SuggestionPage /> : <Navigate to="/home" />}
           />
           <Route
+            path="/profile"
+            element={isAuth ? <ProfilePage /> : <Navigate to="/login" />}
+          />
+          <Route
             path="/profile/:userId"
             element={isAuth ? <ProfilePage /> : <Navigate to="/login" />}
           />

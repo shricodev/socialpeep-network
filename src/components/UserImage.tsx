@@ -15,7 +15,7 @@ const UserImage = ({
         width={size}
         height={size}
         alt="User"
-        src="/public/assets/profileHead.png"
+        src="/assets/profileHead.webp"
       />
     </Box>
   );

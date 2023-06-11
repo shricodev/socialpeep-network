@@ -38,11 +38,11 @@ const Form = () => {
     setLoading(true);
     try {
       await login(email, password);
-      getUserData().then(({ $id: UserId }: { $id: string }) => {
+      getUserData().then(({ $id: userId }: { $id: string }) => {
         const response = databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DB_ID,
           import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
-          [Query.equal("userId", [UserId])]
+          [Query.equal("userId", [userId])]
         );
 
         response.then((result) => {
@@ -52,7 +52,7 @@ const Form = () => {
           dispatch(
             setLogin({
               email: email,
-              token: UserId,
+              token: userId,
               docId: docId,
             })
           );
@@ -62,6 +62,7 @@ const Form = () => {
       navigate("/home");
     } catch (error) {
       const appwriteError = error as AppwriteException;
+      // TODO: show different error message on invalid credentials. I am not able to find how to handle this thing. error.code is not working... :(
       setErrorMessage("There was a problem signing you in!");
       throw new Error(appwriteError.message);
     } finally {

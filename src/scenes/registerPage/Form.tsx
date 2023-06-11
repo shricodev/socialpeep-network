@@ -5,7 +5,7 @@ import {
   useMediaQuery,
   Typography,
 } from "@mui/material";
-import { ID, AppwriteException, Storage } from "appwrite";
+import { ID, AppwriteException } from "appwrite";
 import { useTheme } from "@mui/system";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,12 +14,12 @@ import Dropzone from "react-dropzone";
 import { useContext, useState } from "react";
 import { ScaleLoader } from "react-spinners";
 
-import { GlobalContext, databases, client } from "services/appwrite-service";
+import { GlobalContext, databases } from "services/appwrite-service";
 import FlexBetween from "components/FlexBetween";
 import { registerSchema, initialValuesRegister } from "schemas/RegisterSchema";
 
 const Form = () => {
-  const { register } = useContext(GlobalContext);
+  const { register, handleImageSubmit } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
   // added this state since I had to handle the strict type checking.
@@ -30,16 +30,9 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width: 600px)");
 
   const handleProfileImageSubmit = async () => {
-    const storage = new Storage(client);
-    if (droppedFile) {
-      const { $id: fileId } = await storage.createFile(
-        import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
-        ID.unique(),
-        droppedFile
-      );
-      // store the user profile image id in the localstorage so i don't need to pass it to multiple components
-      localStorage.setItem("profileImgId", fileId);
-    }
+    if (!droppedFile) return;
+    const fileId = handleImageSubmit(droppedFile);
+    localStorage.setItem("profileImage", fileId);
   };
 
   // handle the 'Register' Scenario
@@ -59,6 +52,7 @@ const Form = () => {
         `${values.firstName} ${values.lastName}`
       );
 
+      // this is specific to 'register' page
       const { $id: docId } = await databases.createDocument(
         import.meta.env.VITE_APPWRITE_DB_ID,
         import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
@@ -208,8 +202,8 @@ const Form = () => {
                     multiple={false}
                     onDrop={(acceptedFiles) => {
                       const file = acceptedFiles[0];
-                      setDroppedFile(file);
                       if (file.size <= 5 * 1024 * 1024) {
+                        setDroppedFile(file);
                         setFieldValue("picture", file);
                         setFileError("");
                       } else {

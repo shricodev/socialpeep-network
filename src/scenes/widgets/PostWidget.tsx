@@ -20,43 +20,84 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/system";
 import Dropzone from "react-dropzone";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
 import AuthState from "interfaces/AuthState";
+import { GlobalContext } from "services/appwrite-service";
+import PostInfoType from "types/PostInfo";
 
-const PostWidget = ({ imagePath }: { imagePath: string }) => {
+const PostWidget = ({
+  setPostInfo,
+  imagePath,
+}: {
+  setPostInfo: React.Dispatch<React.SetStateAction<PostInfoType>>;
+  imagePath: string;
+}) => {
+  const { handleAddPost, getUserDocument } = useContext(GlobalContext);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [isImage, setIsImage] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [post, setPost] = useState("");
-  const [droppedFile, setDroppedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState("");
+  // this is specific to the popoer component.
+  const [anchorEl, setAnchorEl] = useState(null);
   const { palette } = useTheme();
 
-  const token = useSelector((state: AuthState) => state.token);
+  const postUserId = useSelector((state: AuthState) => state.token) ?? "";
+  const docId = useSelector((state: AuthState) => state.docId);
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
   const alt = palette.background.alt;
 
-  const handlePost = () => {
-    // do something here... backend
+  const handlePost = async () => {
+    const postImage = image;
+    const postText = post;
+    const postId: string = await handleAddPost(postText, postUserId, 100, [
+      "Hello!!",
+      "hi!!",
+    ]);
+    const response = await getUserDocument(docId);
+    const {
+      firstName,
+      lastName,
+      location,
+    }: { firstName: string; lastName: string; location: string } = response;
+    const postInfo = {
+      postId,
+      postUserId,
+      firstName,
+      lastName,
+      postText,
+      location,
+      postPictureUrl: "/assets/advertise.webp",
+      userPictureUrl: "/assets/github.webp",
+      likes: 0,
+      comments: [""],
+    };
+    setPostInfo(postInfo);
+    // clear out the posttext, image and the fileError if any.
+    setPost("");
+    setImage(null);
+    setFileError("");
   };
 
   const handleEmojiSelect = (emoji: any) => {
     setPost((prevPost) => prevPost + emoji.native);
   };
 
-  const handleToggleEmojiPicker = () => {
+  const handleToggleEmojiPicker = (event: any) => {
+    setAnchorEl(event.currentTarget);
     setShowEmojiPicker(!showEmojiPicker);
   };
 
   const handleEmojiPickerClose = () => {
     setShowEmojiPicker(false);
+    setAnchorEl(null);
   };
 
   return (
@@ -77,6 +118,7 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
         <Popover
           open={showEmojiPicker}
           onClose={handleEmojiPickerClose}
+          anchorEl={anchorEl}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "center",
@@ -102,7 +144,6 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
             multiple={false}
             onDrop={(acceptedFiles) => {
               const file = acceptedFiles[0];
-              setDroppedFile(file);
               if (file.size <= 5 * 1024 * 1024) {
                 setImage(file);
                 setFileError("");
@@ -142,6 +183,13 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
               </FlexBetween>
             )}
           </Dropzone>
+          {/* conditionally render the fileError if the filesize is
+              more than 5MB */}
+          {fileError && (
+            <Typography color="error.main" fontSize="14px">
+              {fileError}
+            </Typography>
+          )}
         </Box>
       )}
 
@@ -182,6 +230,7 @@ const PostWidget = ({ imagePath }: { imagePath: string }) => {
         <Button
           disabled={!post}
           onClick={handlePost}
+          type="submit"
           sx={{
             color: palette.primary.main,
             backgroundColor: palette.background.alt,

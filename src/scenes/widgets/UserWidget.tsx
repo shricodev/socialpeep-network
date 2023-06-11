@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   ManageAccountsOutlined,
@@ -9,24 +9,23 @@ import {
 } from "@mui/icons-material";
 import { Box, Typography, Divider, IconButton } from "@mui/material";
 import { useTheme } from "@mui/system";
-import { AppwriteException, Storage } from "appwrite";
 
-import { GlobalContext, client } from "services/appwrite-service";
+import { GlobalContext } from "services/appwrite-service";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import AuthState from "interfaces/AuthState";
+import { AppwriteException } from "appwrite";
 
 const UserWidget = ({
-  userId,
-  profileImgId,
+  profileImgUrl,
   previewUrl,
-  setPreviewUrl,
+  isProfile,
 }: {
-  userId: string;
-  profileImgId: string;
+  profileImgUrl: string;
   previewUrl: string;
-  setPreviewUrl: React.Dispatch<React.SetStateAction<string>>;
+  isProfile: boolean;
+  // setPreviewUrl: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const { getUserDocument } = useContext(GlobalContext);
   const [user, setUser] = useState({
@@ -37,16 +36,16 @@ const UserWidget = ({
     twitter: "",
     linkedin: "",
     github: "",
-    viewedProfile: 0,
     impressions: 0,
     friends: [],
   });
+  const { getUserProfileImg, getDocId } = useContext(GlobalContext);
   const [, setEditInput] = useState(false);
   const { palette } = useTheme();
-  const token = useSelector((state: AuthState) => state.token);
-  const docId =
-    useSelector((state: AuthState) => state.docId) ??
-    localStorage.getItem("docId");
+  const loggedInUserId = useSelector((state: AuthState) => state.token);
+  const { userId } = useParams();
+
+  console.log(userId, loggedInUserId);
 
   const navigate = useNavigate();
   const main = palette.neutral.main;
@@ -54,25 +53,26 @@ const UserWidget = ({
   const medium = palette.neutral.medium;
   const alt = palette.background.alt;
 
-  const getUserProfileImg = async () => {
+  const getUser = async (userId: string) => {
     try {
-      const storage = new Storage(client);
-      const result = storage.getFilePreview(
-        import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
-        profileImgId
-      );
-      setPreviewUrl(result.href);
+      const userDocId = await getDocId(userId);
+      const userDetails = await getUserDocument(userDocId);
+      setUser(userDetails);
+      console.log(userDetails);
+      // setTimeout(() => {}, 2000);
     } catch (error) {
       const appwriteError = error as AppwriteException;
-      throw new Error(appwriteError.message);
+      console.error(appwriteError.message);
     }
   };
 
   useEffect(() => {
-    getUserProfileImg();
-    getUserDocument(docId).then((result: any) => {
-      setUser(result);
-    });
+    // getUserProfileImg(setPreviewUrl);
+    if (!userId || userId === loggedInUserId) {
+      getUser(loggedInUserId ?? "");
+    } else {
+      getUser(userId ?? "");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -86,8 +86,7 @@ const UserWidget = ({
     twitter,
     linkedin,
     github,
-    viewedProfile = 10,
-    impressions = 10,
+    impressions = 1050,
     friends = ["ram", "shyam", "hari"],
   }: {
     firstName: string;
@@ -97,7 +96,6 @@ const UserWidget = ({
     twitter: string;
     linkedin: string;
     github: string;
-    viewedProfile: number;
     impressions: number;
     friends: string[];
   } = user;
@@ -108,7 +106,7 @@ const UserWidget = ({
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
-        onClick={() => navigate(`/profile/${userId}`)}
+        onClick={() => navigate(`/profile/${loggedInUserId}`)}
       >
         <FlexBetween gap="1rem">
           <UserImage imageUrl={previewUrl} />
@@ -131,6 +129,7 @@ const UserWidget = ({
         </FlexBetween>
         <ManageAccountsOutlined />
       </FlexBetween>
+      <Divider />
       {/* SECOND ROW OF THE USER WIDGET */}
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
@@ -145,14 +144,8 @@ const UserWidget = ({
       <Divider />
       {/* THIRD ROW OF THE USER WIDGET */}
       <Box p="1rem 0">
-        <FlexBetween mb="0.5rem">
-          <Typography color={medium}>Who's viewed your profile</Typography>
-          <Typography color={main} fontWeight="500">
-            {viewedProfile}
-          </Typography>
-        </FlexBetween>
         <FlexBetween>
-          <Typography color={medium}>Impressions of your post</Typography>
+          <Typography color={medium}>Impressions on your posts</Typography>
           <Typography color={main} fontWeight="500">
             {impressions}
           </Typography>
@@ -170,7 +163,7 @@ const UserWidget = ({
             <FlexBetween gap="1rem" mb="0.5rem">
               <a href={twitter} target="_blank">
                 <FlexBetween gap="1rem">
-                  <img src="../assets/twitter.png" alt="twitter" />
+                  <img src="../assets/twitter.webp" alt="twitter" />
                   <Box>
                     <Typography color={main} fontWeight="500">
                       Twitter
@@ -179,7 +172,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === token && (
+              {userId === loggedInUserId && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
@@ -195,7 +188,7 @@ const UserWidget = ({
             <FlexBetween gap="1rem">
               <a href={linkedin} target="_blank">
                 <FlexBetween gap="1rem">
-                  <img src="../assets/linkedin.png" alt="linkedin" />
+                  <img src="../assets/linkedin.webp" alt="linkedin" />
                   <Box>
                     <Typography color={main} fontWeight="500">
                       LinkedIn
@@ -204,7 +197,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === token && (
+              {userId === loggedInUserId && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
@@ -220,7 +213,7 @@ const UserWidget = ({
             <FlexBetween gap="1rem" mb="0.5rem">
               <a href={github} target="_blank">
                 <FlexBetween gap="1rem">
-                  <img src="../assets/github.png" alt="github" />
+                  <img src="../assets/github.webp" alt="github" />
                   <Box>
                     <Typography color={main} fontWeight="500">
                       GitHub
@@ -231,7 +224,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === token && (
+              {userId === loggedInUserId && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
