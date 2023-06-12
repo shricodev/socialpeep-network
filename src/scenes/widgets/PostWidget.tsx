@@ -31,10 +31,10 @@ import { GlobalContext } from "services/appwrite-service";
 import PostInfoType from "types/PostInfo";
 
 const PostWidget = ({
-  setPostInfo,
+  // setPostInfo,
   imagePath,
 }: {
-  setPostInfo: React.Dispatch<React.SetStateAction<PostInfoType>>;
+  // setPostInfo: React.Dispatch<React.SetStateAction<PostInfoType>>;
   imagePath: string;
 }) => {
   const { handleAddPost, getUserDocument } = useContext(GlobalContext);
@@ -79,7 +79,7 @@ const PostWidget = ({
       likes: 0,
       comments: [""],
     };
-    setPostInfo(postInfo);
+    // setPostInfo(postInfo);
     // clear out the posttext, image and the fileError if any.
     setPost("");
     setImage(null);

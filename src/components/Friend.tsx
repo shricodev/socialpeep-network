@@ -23,6 +23,7 @@ const Friend = ({
   const navigate = useNavigate();
   const token = useSelector((state: AuthState) => state.token);
   const friends = useSelector((state: AuthState) => state.friends);
+  const isSelf = friendId === token;
 
   const { palette } = useTheme();
   const primaryDark = palette.primary.dark;
@@ -30,7 +31,7 @@ const Friend = ({
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
 
-  const isFriend = friends.find((friend) => friend.userId === friendId);
+  // const isFriend = friends.find((friend) => friend.userId === friendId);
 
   const patchFriend = () => {
     // do friend remove and add action here...
@@ -66,18 +67,19 @@ const Friend = ({
           </Typography>
         </Box>
       </FlexBetween>
-      <IconButton
-        onClick={() => {
-          patchFriend();
-        }}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      {!isSelf && (
+        <IconButton
+          onClick={() => patchFriend()}
+          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+        >
+          {/* this should be handled properly */}
+          {true ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: primaryDark }} />
+          )}
+        </IconButton>
+      )}
     </FlexBetween>
   );
 };

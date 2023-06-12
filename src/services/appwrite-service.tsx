@@ -83,6 +83,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
       const users = new sdk.Users(client);
 
       await users.get(userId);
+
       return true;
     } catch (error) {
       // User ID is invalid
@@ -173,7 +174,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
         import.meta.env.VITE_APPWRITE_USERFEED_COLLECTION_ID,
         [Query.equal("userId", [userId])]
       );
-      console.log("listing user posts", response);
+      return response;
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "scenes/navbar";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
@@ -17,6 +17,7 @@ const ProfilePage = () => {
   let otherUserDocId: string;
   const { getUserDocument, getDocId, checkUserIdValidity } =
     useContext(GlobalContext);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const [loading, setLoading] = useState(false);
   const { palette } = useTheme();
   const [user, setUser] = useState({
@@ -32,6 +33,7 @@ const ProfilePage = () => {
     friends: [],
   });
   const { userId } = useParams();
+  const navigate = useNavigate();
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
   // this is the main function and it needs to be here to fetch the image once implemented
@@ -49,56 +51,69 @@ const ProfilePage = () => {
   // };
 
   useEffect(() => {
-    // if the userId in the url is not valid then redirect the user to their own profile page.
-    if (!checkUserIdValidity(userId)) <Navigate to="/profile" />;
+    setLoading(true);
+    const checkValidity = async () => {
+      if ((await checkUserIdValidity(userId)) === false) {
+        setShouldRedirect(true);
+      }
+    };
+    checkValidity();
+    setLoading(false);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   return (
-    <Box>
-      <Navbar />
-      {loading ? (
-        <Box
-          height="85vh"
-          justifyContent="center"
-          display="flex"
-          alignItems="center"
-        >
-          <ScaleLoader
-            color={palette.primary.main}
-            height={55}
-            radius={2}
-            width={9}
-            cssOverride={{ textAlign: "center" }}
-          />
-        </Box>
+    <>
+      {shouldRedirect ? (
+        <Navigate to="/home" />
       ) : (
-        <Box
-          width="100%"
-          p="2rem 6%"
-          display={isNonMobileScreens ? "flex" : "block"}
-          gap="2rem"
-          justifyContent="center"
-        >
-          <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-            <UserWidget
-              profileImgUrl={"/assets/profileHead.webp"}
-              isProfile={true}
-              previewUrl={""}
-            />
-            <Box m="2rem 0" />
-            <FriendListWidget userId={userId ?? ""} />
-          </Box>
-          <Box
-            flexBasis={isNonMobileScreens ? "42%" : undefined}
-            mt={isNonMobileScreens ? undefined : "2rem"}
-          >
-            <PostWidget imagePath="/assets/advertise.webp" />
-            {/* <PostsWidget isProfile={true} /> */}
-          </Box>
+        <Box>
+          <Navbar />
+          {loading ? (
+            <Box
+              height="85vh"
+              justifyContent="center"
+              display="flex"
+              alignItems="center"
+            >
+              <ScaleLoader
+                color={palette.primary.main}
+                height={55}
+                radius={2}
+                width={9}
+                cssOverride={{ textAlign: "center" }}
+              />
+            </Box>
+          ) : (
+            <Box
+              width="100%"
+              p="2rem 6%"
+              display={isNonMobileScreens ? "flex" : "block"}
+              gap="2rem"
+              justifyContent="center"
+            >
+              <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
+                <UserWidget
+                  profileImgUrl={"/assets/profileHead.webp"}
+                  isProfile={true}
+                  previewUrl={""}
+                />
+                <Box m="2rem 0" />
+                <FriendListWidget userId={userId ?? ""} />
+              </Box>
+              <Box
+                flexBasis={isNonMobileScreens ? "42%" : undefined}
+                mt={isNonMobileScreens ? undefined : "2rem"}
+              >
+                <PostWidget imagePath="/assets/advertise.webp" />
+                <PostsWidget isProfile={true} />
+              </Box>
+            </Box>
+          )}
         </Box>
       )}
-    </Box>
+    </>
   );
 };
 

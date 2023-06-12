@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   ManageAccountsOutlined,
@@ -39,14 +39,15 @@ const UserWidget = ({
     impressions: 0,
     friends: [],
   });
+  const routeLocation = useLocation();
+  const [isHome, setIsHome] = useState(routeLocation.pathname === "/home");
   const { getUserProfileImg, getDocId } = useContext(GlobalContext);
   const [, setEditInput] = useState(false);
   const { palette } = useTheme();
   const loggedInUserId = useSelector((state: AuthState) => state.token);
   const { userId } = useParams();
 
-  console.log(userId, loggedInUserId);
-
+  const isLoggedInProfile = userId === loggedInUserId;
   const navigate = useNavigate();
   const main = palette.neutral.main;
   const dark = palette.neutral.dark;
@@ -58,8 +59,6 @@ const UserWidget = ({
       const userDocId = await getDocId(userId);
       const userDetails = await getUserDocument(userDocId);
       setUser(userDetails);
-      console.log(userDetails);
-      // setTimeout(() => {}, 2000);
     } catch (error) {
       const appwriteError = error as AppwriteException;
       console.error(appwriteError.message);
@@ -68,7 +67,7 @@ const UserWidget = ({
 
   useEffect(() => {
     // getUserProfileImg(setPreviewUrl);
-    if (!userId || userId === loggedInUserId) {
+    if (!userId || isLoggedInProfile) {
       getUser(loggedInUserId ?? "");
     } else {
       getUser(userId ?? "");
@@ -127,7 +126,8 @@ const UserWidget = ({
             <Typography color={medium}>{friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
+        {((isLoggedInProfile && !isProfile) ||
+          routeLocation.pathname === "/home") && <ManageAccountsOutlined />}
       </FlexBetween>
       <Divider />
       {/* SECOND ROW OF THE USER WIDGET */}
@@ -172,7 +172,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === loggedInUserId && (
+              {(isLoggedInProfile || isHome) && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
@@ -197,7 +197,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === loggedInUserId && (
+              {(isLoggedInProfile || isHome) && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
@@ -224,7 +224,7 @@ const UserWidget = ({
                   </Box>
                 </FlexBetween>
               </a>
-              {userId === loggedInUserId && (
+              {(isLoggedInProfile || isHome) && (
                 <IconButton
                   onClick={() => {
                     setEditInput(true);
