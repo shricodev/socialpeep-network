@@ -66,7 +66,12 @@ const Navbar = () => {
   }, []);
 
   return (
-    <FlexBetween padding="1rem 6%" style={{ backgroundColor: bgAlt }}>
+    <FlexBetween
+      padding="1rem 6%"
+      style={{
+        backgroundColor: bgAlt,
+      }}
+    >
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"

@@ -11,6 +11,7 @@ import HomePage from "scenes/homePage";
 import ProfilePage from "scenes/profilePage";
 import RegisterPage from "scenes/registerPage";
 import SuggestionPage from "scenes/suggestionPage";
+import NewsWidget from "scenes/widgets/NewsWidget";
 
 function App() {
   const mode = useSelector((state: AuthState) => state.mode);
@@ -52,6 +53,10 @@ function App() {
           <Route
             path="/profile/:userId"
             element={isAuth ? <ProfilePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/news/today"
+            element={isAuth ? <NewsWidget /> : <Navigate to="/login" />}
           />
         </Routes>
       </div>

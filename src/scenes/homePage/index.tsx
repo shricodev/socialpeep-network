@@ -9,12 +9,13 @@ import UserWidget from "scenes/widgets/UserWidget";
 import AuthState from "interfaces/AuthState";
 import PostWidget from "scenes/widgets/PostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
-import AdWidget from "scenes/widgets/AdWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import PostInfoType from "types/PostInfo";
+import NewsWidget from "scenes/widgets/NewsWidget";
+import { Article } from "types/Article";
 
 const HomePage = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [postInfo, setPostInfo]: [
     PostInfoType,
     React.Dispatch<React.SetStateAction<PostInfoType>>
@@ -31,12 +32,40 @@ const HomePage = () => {
     comments: [""],
   });
   const { palette } = useTheme();
+  const [articles, setArticles] = useState<Article[]>([]);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [previewUrl, setPreviewUrl] = useState("");
   const [profileImgId, setProfileImgId] = useState<string | null>(null);
   const userId = useSelector((state: AuthState) => state.token);
 
+  const getNews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt`,
+        {
+          method: "GET",
+          headers: {
+            "X-Api-Key": import.meta.env.VITE_NEWSAPIORG_API,
+          },
+        }
+      );
+
+      const data = await response.json();
+      const articles = data.articles.slice(0, 2).map((article: Article) => ({
+        title: article.title,
+        url: article.url,
+        description: article.description,
+        urlToImage: article.urlToImage,
+      }));
+      setArticles(articles);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
+    getNews();
     const storedProfileImgId = localStorage.getItem("profileImgId");
     setProfileImgId(storedProfileImgId);
     // just to give a shuttle feel of loading.. onto the screen
@@ -89,7 +118,7 @@ const HomePage = () => {
           </Box>
           {isNonMobileScreens && (
             <Box flexBasis="26%">
-              <AdWidget />
+              {articles && <NewsWidget articles={articles} />}
               <Box m="2rem 0" />
             </Box>
           )}

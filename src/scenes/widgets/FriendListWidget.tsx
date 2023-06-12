@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@mui/system";
 
@@ -10,6 +10,8 @@ import AuthState from "interfaces/AuthState";
 const FriendListWidget = ({ userId }: { userId: string }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
   const alt = palette.background.alt;
 
   const getFriends = async () => {
@@ -21,7 +23,13 @@ const FriendListWidget = ({ userId }: { userId: string }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <WidgetWrapper alt={alt}>
+    <WidgetWrapper
+      alt={alt}
+      sx={{
+        position: isNonMobileScreens ? "sticky" : "static",
+        top: isNonMobileScreens ? "32rem" : "auto",
+      }}
+    >
       <Typography
         color={palette.neutral.dark}
         variant="h5"

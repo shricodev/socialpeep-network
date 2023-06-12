@@ -124,7 +124,7 @@ const UserWidget = ({
           />
         </Box>
       ) : (
-        <WidgetWrapper alt={alt}>
+        <WidgetWrapper alt={alt} sx={{ position: "sticky", top: "1.5rem" }}>
           {/* FIRST ROW OF THE USER WIDGET */}
           <FlexBetween
             gap="0.5rem"
