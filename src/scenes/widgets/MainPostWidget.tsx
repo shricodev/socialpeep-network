@@ -82,7 +82,7 @@ const MainPostWidget = ({
                   )}
                 </IconButton>
                 {/* place actual like in here for the future */}
-                <Typography>7</Typography>
+                <Typography>{likes}</Typography>
               </FlexBetween>
               <FlexBetween gap="0.3rem">
                 <IconButton onClick={() => setIsComments(!isComments)}>

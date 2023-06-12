@@ -87,7 +87,7 @@ const Form = () => {
           color={palette.primary.main}
           height={45}
           radius={2}
-          width={7}
+          width={6}
           cssOverride={{ textAlign: "center" }}
         />
       ) : (

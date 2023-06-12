@@ -73,9 +73,9 @@ const SuggestionPage = () => {
         >
           <ScaleLoader
             color={palette.primary.main}
-            height={55}
+            height={50}
             radius={2}
-            width={9}
+            width={7}
             cssOverride={{ textAlign: "center" }}
           />
         </Box>

@@ -37,12 +37,12 @@ const HomePage = () => {
   const userId = useSelector((state: AuthState) => state.token);
 
   useEffect(() => {
+    const storedProfileImgId = localStorage.getItem("profileImgId");
+    setProfileImgId(storedProfileImgId);
     // just to give a shuttle feel of loading.. onto the screen
     setTimeout(() => {
       setLoading(false);
-    }, 1200);
-    const storedProfileImgId = localStorage.getItem("profileImgId");
-    setProfileImgId(storedProfileImgId);
+    }, 1000);
   }, []);
 
   return (
@@ -57,9 +57,9 @@ const HomePage = () => {
         >
           <ScaleLoader
             color={palette.primary.main}
-            height={55}
+            height={50}
             radius={2}
-            width={9}
+            width={7}
             cssOverride={{ textAlign: "center" }}
           />
         </Box>

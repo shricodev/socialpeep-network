@@ -104,6 +104,24 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
+  const getUserPostsImpressions = async (userId: string) => {
+    try {
+      const { documents } = await databases.listDocuments(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERFEED_COLLECTION_ID,
+        [Query.equal("userId", [userId])]
+      );
+      const userPostsImpressions = documents.reduce(
+        (totalImpressions, { Likes }) => totalImpressions + Likes,
+        0
+      );
+      return userPostsImpressions;
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
   // this is using sdk version of the client: 'node-appwrite'
   const searchUsersByName = async (searchName: string) => {
     try {
@@ -286,6 +304,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     getUserProfileImg,
     handleImageSubmit,
     checkUserIdValidity,
+    getUserPostsImpressions,
   };
 
   return (
