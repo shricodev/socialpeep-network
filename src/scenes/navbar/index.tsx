@@ -28,13 +28,14 @@ import { GlobalContext } from "services/appwrite-service";
 import UserData from "interfaces/UserData";
 import AuthState from "interfaces/AuthState";
 import SearchResultWidget from "scenes/widgets/SearchResultWidget";
+import { SearchResult } from "types/SearchResult";
 
 const Navbar = () => {
   const [userName, setUserName] = useState("");
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [toggleSearchResult, setToggleSearchResult] = useState(false);
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResult, setSearchResult] = useState<SearchResult[]>();
 
   const { getUserData, searchUsersByName } = useContext(GlobalContext);
   const userId = useSelector((state: AuthState) => state.token);
@@ -246,7 +247,7 @@ const Navbar = () => {
       )}
 
       {/* render the SearchResultWidget as a popover */}
-      {toggleSearchResult && searchResult && (
+      {toggleSearchResult && searchResult && Array.isArray(searchResult) && (
         <Box
           position="absolute"
           top="calc(100% + 16px)"

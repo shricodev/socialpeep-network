@@ -1,28 +1,35 @@
+import { useContext, useEffect, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import { useTheme } from "@mui/system";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import AuthState from "interfaces/AuthState";
+import { GlobalContext } from "services/appwrite-service";
 
 const Friend = ({
   friendId,
   name,
   subtitle,
   userPictureUrl,
+  onRemove,
 }: {
   friendId: string;
   name: string;
   subtitle: string;
   userPictureUrl: string;
+  onRemove: () => void;
 }) => {
-  const dispatch = useDispatch();
+  const [isFriend, setIsFriend] = useState(false);
+  const { checkIsFriend, handleAddFriend, handleRemoveFriend } =
+    useContext(GlobalContext);
+
   const navigate = useNavigate();
   const token = useSelector((state: AuthState) => state.token);
-  const friends = useSelector((state: AuthState) => state.friends);
+  const docId = useSelector((state: AuthState) => state.docId);
   const isSelf = friendId === token;
 
   const { palette } = useTheme();
@@ -31,10 +38,29 @@ const Friend = ({
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
 
-  // const isFriend = friends.find((friend) => friend.userId === friendId);
+  useEffect(() => {
+    const getIsFriend = async () => {
+      try {
+        const isFriend: boolean = await checkIsFriend(docId, friendId);
+        setIsFriend(isFriend);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getIsFriend();
+  }, []);
 
-  const patchFriend = () => {
-    // do friend remove and add action here...
+  const patchFriend = async () => {
+    try {
+      if (isFriend) {
+        await handleRemoveFriend(docId, friendId);
+        onRemove();
+      } else {
+        await handleAddFriend(docId, friendId);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -73,7 +99,7 @@ const Friend = ({
           sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
         >
           {/* this should be handled properly */}
-          {true ? (
+          {isFriend ? (
             <PersonRemoveOutlined sx={{ color: primaryDark }} />
           ) : (
             <PersonAddOutlined sx={{ color: primaryDark }} />

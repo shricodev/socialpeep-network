@@ -11,7 +11,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 const SearchResultWidget = ({
   searchResult,
 }: {
-  searchResult: SearchResult[];
+  searchResult?: SearchResult[];
 }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -23,6 +23,8 @@ const SearchResultWidget = ({
 
   useEffect(() => {
     // just to give a shuttle feel of loading
+    console.log("search result called");
+
     setTimeout(() => {
       setLoading(false);
     }, 1200);
@@ -53,38 +55,42 @@ const SearchResultWidget = ({
         </WidgetWrapper>
       ) : (
         <WidgetWrapper alt={alt}>
-          {searchResult.map(({ firstName, lastName, location, userId }) => (
-            <FlexBetween>
-              <FlexBetween gap="1rem">
-                <UserImage imageUrl={"/assets/profileHead.webp"} size="55px" />
-                <Box
-                  onClick={() => {
-                    navigate(`/profile/${userId}`);
-                    // to refresh the component. not a very ideal way
-                    navigate(0);
-                  }}
-                >
-                  <Typography
-                    color={main}
-                    variant="h5"
-                    fontWeight="500"
-                    sx={{
-                      "&:hover": {
-                        opacity: 0.8,
-                        transition: "150ms all ease-out",
-                        cursor: "pointer",
-                      },
+          {searchResult &&
+            searchResult.map(({ firstName, lastName, location, userId }) => (
+              <FlexBetween>
+                <FlexBetween gap="1rem">
+                  <UserImage
+                    imageUrl={"/assets/profileHead.webp"}
+                    size="55px"
+                  />
+                  <Box
+                    onClick={() => {
+                      navigate(`/profile/${userId}`);
+                      // to refresh the component. not a very ideal way
+                      navigate(0);
                     }}
                   >
-                    {firstName} {lastName}
-                  </Typography>
-                  <Typography color={medium} fontSize="0.75rem">
-                    {location}
-                  </Typography>
-                </Box>
+                    <Typography
+                      color={main}
+                      variant="h5"
+                      fontWeight="500"
+                      sx={{
+                        "&:hover": {
+                          opacity: 0.8,
+                          transition: "150ms all ease-out",
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      {firstName} {lastName}
+                    </Typography>
+                    <Typography color={medium} fontSize="0.75rem">
+                      {location}
+                    </Typography>
+                  </Box>
+                </FlexBetween>
               </FlexBetween>
-            </FlexBetween>
-          ))}
+            ))}
         </WidgetWrapper>
       )}
     </>

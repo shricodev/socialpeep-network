@@ -199,6 +199,94 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
+  const getFriends = async (docId: string) => {
+    try {
+      const { friends } = await databases.getDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId
+      );
+
+      return friends;
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const checkIsFriend = async (
+    docId: string,
+    friendId: string
+  ): Promise<boolean> => {
+    try {
+      const { friends } = await databases.getDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId
+      );
+
+      const isFriend = friends.some((friend: string) => friend === friendId);
+      return isFriend;
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const handleAddFriend = async (docId: string, friendId: string) => {
+    try {
+      const { friends: prevFriends } = await databases.getDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId
+      );
+
+      const updatedFriends = prevFriends.push(friendId);
+
+      const updateResponse = await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId,
+        {
+          friends: updatedFriends,
+        }
+      );
+
+      console.log(updateResponse);
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const handleRemoveFriend = async (docId: string, friendId: string) => {
+    try {
+      const { friends: prevFriends } = await databases.getDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId
+      );
+
+      const updatedFriends: string[] = prevFriends.filter(
+        (friend: string) => friend !== friendId
+      );
+
+      const updateResponse = await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        docId,
+        {
+          friends: updatedFriends,
+        }
+      );
+
+      console.log(updateResponse);
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
   // this is using sdk version of the client: 'node-appwrite'
   const searchUsersByName = async (searchName: string) => {
     try {
@@ -301,6 +389,10 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     listUserPost,
     updatePostLike,
     updatePostComment,
+    getFriends,
+    checkIsFriend,
+    handleAddFriend,
+    handleRemoveFriend,
     searchUsersByName,
     getUserProfileImg,
     handleImageSubmit,

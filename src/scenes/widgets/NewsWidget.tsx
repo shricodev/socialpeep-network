@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { Article } from "types/Article";
+import * as React from "react";
 
 const NewsWidget = ({ articles }: { articles?: Article[] }) => {
   const navigate = useNavigate();
@@ -39,8 +40,8 @@ const NewsWidget = ({ articles }: { articles?: Article[] }) => {
         </FlexBetween>
         {articles &&
           articles.map((article, index) => (
-            <>
-              <a href={article.url}>
+            <React.Fragment key={`${article.url}_${index}`}>
+              <a href={article.url} target="_blank">
                 <img
                   width="100%"
                   height="100%"
@@ -66,7 +67,7 @@ const NewsWidget = ({ articles }: { articles?: Article[] }) => {
               </a>
               <Box m="1rem 2rem 0 0" />
               {index !== 1 && <Divider />}
-            </>
+            </React.Fragment>
           ))}
       </WidgetWrapper>
     </>

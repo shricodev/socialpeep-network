@@ -7,6 +7,7 @@ import MainPostWidget from "./MainPostWidget";
 import AuthState from "interfaces/AuthState";
 import { GlobalContext } from "services/appwrite-service";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import WidgetWrapper from "components/WidgetWrapper";
 
 const PostsWidget = ({
   // postInfo,
@@ -46,6 +47,7 @@ const PostsWidget = ({
   const docId = useSelector((state: AuthState) => state.docId);
 
   const { palette } = useTheme();
+  const alt = palette.background.alt;
 
   const getPosts = () => {
     // get the other users post
@@ -72,20 +74,22 @@ const PostsWidget = ({
   return (
     <>
       {loading ? (
-        <Box
-          height="50vh"
-          justifyContent="center"
-          display="flex"
-          alignItems="center"
-        >
-          <ScaleLoader
-            color={palette.primary.main}
-            height={45}
-            radius={2}
-            width={6}
-            cssOverride={{ textAlign: "center" }}
-          />
-        </Box>
+        <WidgetWrapper alt={alt} mt="2rem">
+          <Box
+            height="55vh"
+            justifyContent="center"
+            display="flex"
+            alignItems="center"
+          >
+            <ScaleLoader
+              color={palette.primary.main}
+              height={45}
+              radius={2}
+              width={6}
+              cssOverride={{ textAlign: "center" }}
+            />
+          </Box>
+        </WidgetWrapper>
       ) : (
         <>
           {posts.map(

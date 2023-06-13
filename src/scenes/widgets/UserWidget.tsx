@@ -9,8 +9,8 @@ import {
 } from "@mui/icons-material";
 import { Box, Typography, Divider, IconButton } from "@mui/material";
 import { useTheme } from "@mui/system";
-import ScaleLoader from "react-spinners/ScaleLoader";
 import { AppwriteException } from "appwrite";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import { GlobalContext } from "services/appwrite-service";
 import UserImage from "components/UserImage";
@@ -113,20 +113,22 @@ const UserWidget = ({
   return (
     <>
       {loading ? (
-        <Box
-          height="50vh"
-          justifyContent="center"
-          display="flex"
-          alignItems="center"
-        >
-          <ScaleLoader
-            color={palette.primary.main}
-            height={20}
-            radius={2}
-            width={4}
-            cssOverride={{ textAlign: "center" }}
-          />
-        </Box>
+        <WidgetWrapper alt={alt}>
+          <Box
+            height="50vh"
+            justifyContent="center"
+            display="flex"
+            alignItems="center"
+          >
+            <ScaleLoader
+              color={palette.primary.main}
+              height={30}
+              radius={3}
+              width={4}
+              cssOverride={{ textAlign: "center" }}
+            />
+          </Box>
+        </WidgetWrapper>
       ) : (
         <WidgetWrapper alt={alt} sx={{ position: "sticky", top: "1.5rem" }}>
           {/* FIRST ROW OF THE USER WIDGET */}
