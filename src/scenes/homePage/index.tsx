@@ -1,17 +1,18 @@
-import { Box, useMediaQuery } from "@mui/material";
-import { useSelector } from "react-redux";
-import { ScaleLoader } from "react-spinners";
-import { useTheme } from "@mui/system";
 import { useEffect, useState } from "react";
+import { Box, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/system";
+import { useSelector } from "react-redux";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import Navbar from "scenes/navbar";
 import UserWidget from "scenes/widgets/UserWidget";
-import AuthState from "interfaces/AuthState";
 import PostWidget from "scenes/widgets/PostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
-import PostInfoType from "types/PostInfo";
 import NewsWidget from "scenes/widgets/NewsWidget";
+
+import AuthState from "interfaces/AuthState";
+import PostInfoType from "types/PostInfo";
 import { Article } from "types/Article";
 
 const HomePage = () => {
@@ -31,12 +32,14 @@ const HomePage = () => {
     likes: 0,
     comments: [""],
   });
-  const { palette } = useTheme();
   const [articles, setArticles] = useState<Article[]>([]);
-  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [previewUrl, setPreviewUrl] = useState("");
   const [profileImgId, setProfileImgId] = useState<string | null>(null);
+
   const userId = useSelector((state: AuthState) => state.token);
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
+  const { palette } = useTheme();
 
   const getNews = async () => {
     try {

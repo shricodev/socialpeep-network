@@ -9,14 +9,14 @@ import {
 } from "@mui/icons-material";
 import { Box, Typography, Divider, IconButton } from "@mui/material";
 import { useTheme } from "@mui/system";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { AppwriteException } from "appwrite";
 
 import { GlobalContext } from "services/appwrite-service";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import AuthState from "interfaces/AuthState";
-import { AppwriteException } from "appwrite";
-import { ScaleLoader } from "react-spinners";
 
 const UserWidget = ({
   profileImgUrl,
@@ -42,8 +42,12 @@ const UserWidget = ({
   });
   const routeLocation = useLocation();
   const [isHome, setIsHome] = useState(routeLocation.pathname === "/home");
-  const { getUserProfileImg, getDocId, getUserPostsImpressions } =
-    useContext(GlobalContext);
+  const {
+    getUserProfileImg,
+    getDocId,
+    getUserPostsImpressions,
+    getUserFriends,
+  } = useContext(GlobalContext);
   const [, setEditInput] = useState(false);
   const { palette } = useTheme();
   const loggedInUserId = useSelector((state: AuthState) => state.token);
@@ -64,8 +68,8 @@ const UserWidget = ({
       const userDocId = await getDocId(userId);
       const userDetails = await getUserDocument(userDocId);
       const impressions = await getUserPostsImpressions(userId);
-      setImpressions(impressions);
       setUser(userDetails);
+      setImpressions(impressions);
       setLoading(false);
     } catch (error) {
       const appwriteError = error as AppwriteException;
@@ -94,7 +98,7 @@ const UserWidget = ({
     twitter,
     linkedin,
     github,
-    friends = ["ram", "shyam", "hari"],
+    friends,
   }: {
     firstName: string;
     lastName: string;

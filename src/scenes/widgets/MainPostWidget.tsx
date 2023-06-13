@@ -36,6 +36,7 @@ const MainPostWidget = ({
   comments: string[];
 }) => {
   const [isComments, setIsComments] = useState(false);
+
   const loggedInUserId = useSelector((state: AuthState) => state.token);
   // TODO: handle appwrite fxn to keep track of whether the user has liked any of the posts in the feed..
 

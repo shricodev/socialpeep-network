@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import {
   Client,
   Databases,
@@ -7,9 +8,9 @@ import {
   Query,
   Storage,
 } from "appwrite";
-import { createContext, useContext } from "react";
-import { GlobalProviderProps } from "types/GlobalProvider";
 import * as sdk from "node-appwrite";
+
+import { GlobalProviderProps } from "types/GlobalProvider";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const client = new Client();
@@ -27,21 +28,6 @@ export const GlobalContext = createContext<any>(null);
 export const useGlobalContext = () => useContext(GlobalContext);
 
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
-  const getUserData = async () => {
-    try {
-      const account = new Account(client);
-      return await account.get();
-    } catch (error) {
-      const appwriteError = error as AppwriteException;
-      throw new Error(appwriteError.message);
-    }
-  };
-
-  const loginWithGoogle = async () => {
-    const account = new Account(client);
-    account.createOAuth2Session("google");
-  };
-
   const register = async (email: string, password: string, name: string) => {
     try {
       const account = new Account(client);
@@ -62,6 +48,11 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
+  const loginWithGoogle = async () => {
+    const account = new Account(client);
+    account.createOAuth2Session("google");
+  };
+
   const logout = async () => {
     try {
       const account = new Account(client);
@@ -72,22 +63,34 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
-  const checkUserIdValidity = async (userId: string): Promise<boolean> => {
+  const getUserData = async () => {
     try {
-      const client = new sdk.Client();
-      client
-        .setEndpoint(import.meta.env.VITE_APPWRITE_API)
-        .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID)
-        .setKey(import.meta.env.VITE_APPWRITE_API_READUSERS);
-
-      const users = new sdk.Users(client);
-
-      await users.get(userId);
-
-      return true;
+      const account = new Account(client);
+      return await account.get();
     } catch (error) {
-      // User ID is invalid
-      return false;
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  // this is used to fetch the docId of the user, which is created when the user first registers
+  const getDocId = async (userId: string): Promise<string | null> => {
+    try {
+      const response = await databases.listDocuments(
+        import.meta.env.VITE_APPWRITE_DB_ID,
+        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        [Query.equal("userId", [userId])]
+      );
+
+      if (response.documents && response.documents.length > 0) {
+        const docId = response.documents[0].$id;
+        return docId;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
     }
   };
 
@@ -98,62 +101,6 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
         import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
         docId
       );
-    } catch (error) {
-      const appwriteError = error as AppwriteException;
-      throw new Error(appwriteError.message);
-    }
-  };
-
-  const getUserPostsImpressions = async (userId: string) => {
-    try {
-      const { documents } = await databases.listDocuments(
-        import.meta.env.VITE_APPWRITE_DB_ID,
-        import.meta.env.VITE_APPWRITE_USERFEED_COLLECTION_ID,
-        [Query.equal("userId", [userId])]
-      );
-      const userPostsImpressions = documents.reduce(
-        (totalImpressions, { Likes }) => totalImpressions + Likes,
-        0
-      );
-      return userPostsImpressions;
-    } catch (error) {
-      const appwriteError = error as AppwriteException;
-      throw new Error(appwriteError.message);
-    }
-  };
-
-  // this is using sdk version of the client: 'node-appwrite'
-  const searchUsersByName = async (searchName: string) => {
-    try {
-      const client = new sdk.Client();
-
-      const users = new sdk.Users(client);
-
-      client
-        .setEndpoint(import.meta.env.VITE_APPWRITE_API)
-        .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID)
-        .setKey(import.meta.env.VITE_APPWRITE_API_READUSERS);
-
-      // Best to use is probably 'startsWith' but is giving me an error.
-      const searchResult = await users.list([Query.equal("name", searchName)]);
-      return searchResult;
-    } catch (error) {
-      const appwriteError = error as AppwriteException;
-      throw new Error(appwriteError.message);
-    }
-  };
-
-  const getUserProfileImg = async (
-    profileImgId = "",
-    setPreviewUrl: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    try {
-      const storage = new Storage(client);
-      const result = storage.getFilePreview(
-        import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
-        profileImgId
-      );
-      setPreviewUrl(result.href);
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);
@@ -252,6 +199,44 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
+  // this is using sdk version of the client: 'node-appwrite'
+  const searchUsersByName = async (searchName: string) => {
+    try {
+      const client = new sdk.Client();
+
+      const users = new sdk.Users(client);
+
+      client
+        .setEndpoint(import.meta.env.VITE_APPWRITE_API)
+        .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID)
+        .setKey(import.meta.env.VITE_APPWRITE_API_READUSERS);
+
+      // Best to use is probably 'startsWith' but is giving me an error.
+      const searchResult = await users.list([Query.equal("name", searchName)]);
+      return searchResult.users;
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
+  const getUserProfileImg = async (
+    profileImgId = "",
+    setPreviewUrl: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    try {
+      const storage = new Storage(client);
+      const result = storage.getFilePreview(
+        import.meta.env.VITE_APPWRITE_USERIMAGE_BUCKET_ID,
+        profileImgId
+      );
+      setPreviewUrl(result.href);
+    } catch (error) {
+      const appwriteError = error as AppwriteException;
+      throw new Error(appwriteError.message);
+    }
+  };
+
   const handleImageSubmit = async (file: File) => {
     try {
       const storage = new Storage(client);
@@ -267,21 +252,37 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
     }
   };
 
-  // this is used to fetch the docId of the user, which is created when the user first registers
-  const getDocId = async (userId: string): Promise<string | null> => {
+  const checkUserIdValidity = async (userId: string): Promise<boolean> => {
     try {
-      const response = await databases.listDocuments(
+      const client = new sdk.Client();
+      client
+        .setEndpoint(import.meta.env.VITE_APPWRITE_API)
+        .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID)
+        .setKey(import.meta.env.VITE_APPWRITE_API_READUSERS);
+
+      const users = new sdk.Users(client);
+
+      await users.get(userId);
+
+      return true;
+    } catch (error) {
+      // User ID is invalid
+      return false;
+    }
+  };
+
+  const getUserPostsImpressions = async (userId: string) => {
+    try {
+      const { documents } = await databases.listDocuments(
         import.meta.env.VITE_APPWRITE_DB_ID,
-        import.meta.env.VITE_APPWRITE_USERDATA_COLLECTION_ID,
+        import.meta.env.VITE_APPWRITE_USERFEED_COLLECTION_ID,
         [Query.equal("userId", [userId])]
       );
-
-      if (response.documents && response.documents.length > 0) {
-        const docId = response.documents[0].$id;
-        return docId;
-      } else {
-        return null;
-      }
+      const userPostsImpressions = documents.reduce(
+        (totalImpressions, { Likes }) => totalImpressions + Likes,
+        0
+      );
+      return userPostsImpressions;
     } catch (error) {
       const appwriteError = error as AppwriteException;
       throw new Error(appwriteError.message);
@@ -289,17 +290,17 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   };
 
   const contextProps = {
-    login,
-    logout,
     register,
+    login,
+    loginWithGoogle,
+    logout,
     getDocId,
     getUserData,
-    listUserPost,
+    getUserDocument,
     handleAddPost,
+    listUserPost,
     updatePostLike,
     updatePostComment,
-    getUserDocument,
-    loginWithGoogle,
     searchUsersByName,
     getUserProfileImg,
     handleImageSubmit,

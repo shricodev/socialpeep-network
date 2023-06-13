@@ -5,13 +5,12 @@ import { useTheme } from "@mui/system";
 
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import AuthState from "interfaces/AuthState";
 
 const FriendListWidget = ({ userId }: { userId: string }) => {
   const dispatch = useDispatch();
-  const { palette } = useTheme();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
+  const { palette } = useTheme();
   const alt = palette.background.alt;
 
   const getFriends = async () => {

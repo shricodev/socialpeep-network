@@ -27,20 +27,22 @@ import { setMode, setLogout } from "state";
 import { GlobalContext } from "services/appwrite-service";
 import UserData from "interfaces/UserData";
 import AuthState from "interfaces/AuthState";
+import SearchResultWidget from "scenes/widgets/SearchResultWidget";
 
 const Navbar = () => {
-  const { getUserData, searchUsersByName } = useContext(GlobalContext);
-  const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const [userName, setUserName] = useState("");
+  const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [toggleSearchResult, setToggleSearchResult] = useState(false);
-  const [result, setResult] = useState();
+  const [searchResult, setSearchResult] = useState(null);
+
+  const { getUserData, searchUsersByName } = useContext(GlobalContext);
+  const userId = useSelector((state: AuthState) => state.token);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-  const userId = useSelector((state: AuthState) => state.token);
 
   const theme = useTheme();
   const neutralLight: string = theme.palette.neutral.light;
@@ -100,13 +102,13 @@ const Navbar = () => {
               placeholder="Search.."
               sx={{ userSelect: "none" }}
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(event) => setSearchInput(event.target.value)}
             />
             <IconButton
               onClick={() => {
                 setToggleSearchResult(!toggleSearchResult);
                 const response = searchUsersByName(searchInput);
-                setResult(response);
+                setSearchResult(response);
                 console.log(response);
               }}
             >
@@ -240,6 +242,19 @@ const Navbar = () => {
               </Select>
             </FormControl>
           </FlexBetween>
+        </Box>
+      )}
+
+      {/* render the SearchResultWidget as a popover */}
+      {toggleSearchResult && searchResult && (
+        <Box
+          position="absolute"
+          top="calc(100% + 16px)"
+          left="0"
+          right="0"
+          zIndex="999"
+        >
+          <SearchResultWidget searchResult={searchResult} />
         </Box>
       )}
     </FlexBetween>

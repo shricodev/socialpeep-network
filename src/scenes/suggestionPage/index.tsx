@@ -1,3 +1,4 @@
+import { useState, useContext } from "react";
 import {
   Box,
   Button,
@@ -5,12 +6,11 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { useState, useContext } from "react";
 import { ID, AppwriteException } from "appwrite";
 import { useTheme } from "@mui/system";
 import { Formik, FormikHelpers } from "formik";
 import { useNavigate } from "react-router-dom";
-import { ScaleLoader } from "react-spinners";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import Navbar from "scenes/navbar";
 import { GlobalContext, databases } from "services/appwrite-service";
@@ -21,13 +21,14 @@ import {
 
 const SuggestionPage = () => {
   const [loading, setLoading] = useState(false);
+
   const { getUserData } = useContext(GlobalContext);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-
   let fullName = "";
   const navigate = useNavigate();
-  const { palette } = useTheme();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
+
+  const { palette } = useTheme();
 
   // handle the 'Suggestion Submission' Scenario
   const handleFormSubmit = async (

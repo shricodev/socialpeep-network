@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/system";
 
 import MainPostWidget from "./MainPostWidget";
 import AuthState from "interfaces/AuthState";
 import { GlobalContext } from "services/appwrite-service";
-import { Box } from "@mui/material";
-import { ScaleLoader } from "react-spinners";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 const PostsWidget = ({
   // postInfo,
@@ -26,8 +26,6 @@ const PostsWidget = ({
   // };
   isProfile?: boolean;
 }) => {
-  const { listUserPost, getUserDocument, getUserPostsImpressions } =
-    useContext(GlobalContext);
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -41,8 +39,12 @@ const PostsWidget = ({
   });
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+
+  const { listUserPost, getUserDocument, getUserPostsImpressions } =
+    useContext(GlobalContext);
   const token = useSelector((state: AuthState) => state.token);
   const docId = useSelector((state: AuthState) => state.docId);
+
   const { palette } = useTheme();
 
   const getPosts = () => {

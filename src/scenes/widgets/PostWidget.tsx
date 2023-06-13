@@ -26,8 +26,8 @@ import { useSelector } from "react-redux";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import FlexBetween from "components/FlexBetween";
-import AuthState from "interfaces/AuthState";
 import { GlobalContext } from "services/appwrite-service";
+import AuthState from "interfaces/AuthState";
 import PostInfoType from "types/PostInfo";
 
 const PostWidget = ({
@@ -37,19 +37,20 @@ const PostWidget = ({
   // setPostInfo: React.Dispatch<React.SetStateAction<PostInfoType>>;
   imagePath: string;
 }) => {
-  const { handleAddPost, getUserDocument } = useContext(GlobalContext);
-  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const [isImage, setIsImage] = useState(false);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
   const [post, setPost] = useState("");
   const [fileError, setFileError] = useState("");
-  // this is specific to the popoer component.
+  const [image, setImage] = useState<File | null>(null);
+  // this is specific to the popover component.
   const [anchorEl, setAnchorEl] = useState(null);
-  const { palette } = useTheme();
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  const { handleAddPost, getUserDocument } = useContext(GlobalContext);
   const postUserId = useSelector((state: AuthState) => state.token) ?? "";
   const docId = useSelector((state: AuthState) => state.docId);
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
+  const { palette } = useTheme();
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
   const alt = palette.background.alt;

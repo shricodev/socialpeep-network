@@ -7,8 +7,9 @@ import Form from "./Form";
 import { setMode } from "state";
 
 const RegisterPage = () => {
-  const dispatch = useDispatch();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+  const dispatch = useDispatch();
+
   const theme = useTheme();
   const dark: string = theme.palette.neutral.dark;
 

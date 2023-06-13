@@ -12,22 +12,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { Formik, FormikHelpers } from "formik";
 import Dropzone from "react-dropzone";
 import { useContext, useState } from "react";
-import { ScaleLoader } from "react-spinners";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
-import { GlobalContext, databases } from "services/appwrite-service";
 import FlexBetween from "components/FlexBetween";
+import { GlobalContext, databases } from "services/appwrite-service";
 import { registerSchema, initialValuesRegister } from "schemas/RegisterSchema";
 
 const Form = () => {
-  const { register, handleImageSubmit } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState("");
   // added this state since I had to handle the strict type checking.
   const [droppedFile, setDroppedFile] = useState<File | null>(null);
-
-  const { palette } = useTheme();
+  const { register, handleImageSubmit } = useContext(GlobalContext);
   const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
+
+  const { palette } = useTheme();
 
   const handleProfileImageSubmit = async () => {
     if (!droppedFile) return;

@@ -1,3 +1,4 @@
+import { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -5,7 +6,6 @@ import {
   useMediaQuery,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
 import { useTheme } from "@mui/system";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -20,12 +20,14 @@ import { loginSchema, initialValuesLogin } from "schemas/LoginSchema";
 const Form = () => {
   let docId: string;
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const { login, getUserData } = useContext(GlobalContext);
-  const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width: 600px)");
-  const [errorMessage, setErrorMessage] = useState("");
+
+  const { palette } = useTheme();
 
   // handle the 'Login' Scenario
   const handleFormSubmit = async ({

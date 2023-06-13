@@ -6,7 +6,7 @@ import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { Article } from "types/Article";
 
-const NewsWidget = ({ articles }: { articles: Article[] }) => {
+const NewsWidget = ({ articles }: { articles?: Article[] }) => {
   const navigate = useNavigate();
 
   const { palette } = useTheme();
@@ -37,36 +37,37 @@ const NewsWidget = ({ articles }: { articles: Article[] }) => {
             </Typography>
           </a>
         </FlexBetween>
-        {articles.map((article, index) => (
-          <>
-            <a href={article.url}>
-              <img
-                width="100%"
-                height="100%"
-                alt="advertisement"
-                src={article.urlToImage}
-                style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
-              />
-              <FlexBetween>
-                <Typography color={main}>{article.title}</Typography>
-              </FlexBetween>
-              <Typography
-                color={medium}
-                m="0.5rem 0"
-                sx={{
-                  width: "355px",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                }}
-              >
-                {article.description}
-              </Typography>
-            </a>
-            <Box m="1rem 2rem 0 0" />
-            {index !== 1 && <Divider />}
-          </>
-        ))}
+        {articles &&
+          articles.map((article, index) => (
+            <>
+              <a href={article.url}>
+                <img
+                  width="100%"
+                  height="100%"
+                  alt="advertisement"
+                  src={article.urlToImage}
+                  style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
+                />
+                <FlexBetween>
+                  <Typography color={main}>{article.title}</Typography>
+                </FlexBetween>
+                <Typography
+                  color={medium}
+                  m="0.5rem 0"
+                  sx={{
+                    width: "355px",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                  }}
+                >
+                  {article.description}
+                </Typography>
+              </a>
+              <Box m="1rem 2rem 0 0" />
+              {index !== 1 && <Divider />}
+            </>
+          ))}
       </WidgetWrapper>
     </>
   );

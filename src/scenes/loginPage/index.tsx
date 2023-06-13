@@ -9,6 +9,7 @@ import { setMode } from "state";
 const LoginPage = () => {
   const dispatch = useDispatch();
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
   const theme = useTheme();
   const dark: string = theme.palette.neutral.dark;
 

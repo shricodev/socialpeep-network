@@ -1,25 +1,19 @@
 import { useContext, useEffect, useState } from "react";
 import { Box, useMediaQuery } from "@mui/material";
-import { useSelector } from "react-redux";
-import { useTheme } from "@mui/material";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useTheme } from "@mui/system";
+import { useNavigate, useParams } from "react-router-dom";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import Navbar from "scenes/navbar";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
 import PostWidget from "scenes/widgets/PostWidget";
-import { databases, client, GlobalContext } from "services/appwrite-service";
-import { AppwriteException, Query, Storage } from "appwrite";
-import { ScaleLoader } from "react-spinners";
+import { GlobalContext } from "services/appwrite-service";
 
 const ProfilePage = () => {
   let otherUserDocId: string;
-  const { getUserDocument, getDocId, checkUserIdValidity } =
-    useContext(GlobalContext);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { palette } = useTheme();
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -32,9 +26,14 @@ const ProfilePage = () => {
     impressions: 0,
     friends: [],
   });
+
+  const { getUserDocument, getDocId, checkUserIdValidity } =
+    useContext(GlobalContext);
   const { userId } = useParams();
   const navigate = useNavigate();
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+
+  const { palette } = useTheme();
 
   useEffect(() => {
     setLoading(true);
